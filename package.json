@@ -1,0 +1,18 @@
+{
+  "name": "house_automation",
+  "version": "0.0.1",
+  "description": "Something to occupy the time",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "schedule": "^0.1.0"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^3.2.0"
+  }
+}
