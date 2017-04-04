@@ -4,14 +4,20 @@
   "description": "Something to occupy the time",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node bin/www",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.15.2",
     "schedule": "^0.1.0"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.3",
+    "eslint-plugin-import": "^2.2.0",
     "expect.js": "^0.3.1",
     "mocha": "^3.2.0"
   }
