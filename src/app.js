@@ -13,16 +13,24 @@ const myEmitter = new MyEmitter();
 
 const openAt = 7;
 const closeAt = 18;
-
+let blindStatus;
 myEmitter.on('openBlind', () => {
   debug('Will Open the blind Now');
-  openBlindSequence();
+  if (blindStatus !== 'open') {
+    openBlindSequence();
+    blindStatus = 'open';
+  }
 });
 
 myEmitter.on('closeBlind', () => {
-  debug('Will Cose the blind Now');
-  closeBlindSequence();
+  debug('Will Close the blind Now');
+  if (blindStatus !== 'closed') {
+    closeBlindSequence();
+    blindStatus = 'closed';
+  }
 });
+
+
 
 scheduler(`* ${openAt} * * *`, myEmitter, 'openBlind');
 scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
