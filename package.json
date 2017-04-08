@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.2",
-    "schedule": "^0.1.0"
+    "node-schedule": "^1.2.1"
   },
   "devDependencies": {
     "eslint": "^3.19.0",
