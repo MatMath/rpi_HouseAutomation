@@ -1,11 +1,13 @@
 // To use debug: export DEBUG=core,schedule
 const debug = require('debug')('core');
 const express = require('express');
+const path = require('path');
 const EventEmitter = require('events');
 
 // Local Dependency
 const { scheduler } = require('./scheduler.js');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
+const { resizeAndValidateImg } = require('./openCVManager.js');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
@@ -33,6 +35,17 @@ myEmitter.on('closeBlind', () => {
 
 scheduler(`* ${openAt} * * *`, myEmitter, 'openBlind');
 scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
+
+// On movement
+myEmitter.on('movement', async () => {
+  // Capture a image. --> ffmpg??
+  // Save a image on disk
+  // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
+  const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
+  // Resize to appropriate level
+  // Do img Validation on it
+  resizeAndValidateImg(imgPath); // This will run on each image that get in in paralle.
+});
 
 // Handle the Image Capture flow On Mac (testing) and (Linux real).
 // FFMPG ? Or ??

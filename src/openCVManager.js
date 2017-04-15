@@ -1,8 +1,11 @@
+const debug = require('debug')('img');
 const easyimage = require('easyimage');
+const path = require('path');
+const fs = require('fs');
 
 const resizeImg = async (imgPath, name) => {
-  console.log('Resizing ', imgPath);
-  const result = await easyimage.rescrop({ src: imgPath,
+  debug('Resizing ', imgPath);
+  const result = await easyimage.resize({ src: imgPath,
     dst: `./outputData/${name}`,
     width: 1000,
     height: 1000,
@@ -12,11 +15,44 @@ const resizeImg = async (imgPath, name) => {
   return result;
 };
 
-const validateImageSize = async (imgPath) => {
+const validateAndResizeImg = async (imgPath) => {
   const imgInfo = await easyimage.info(imgPath);
-  console.log('Img Info BEFORE: ', imgInfo);
+  debug('Img Info BEFORE: ', imgInfo);
   const imgResize = await resizeImg(imgInfo.path, imgInfo.name);
+  debug('img After resize:', imgResize);
   return imgResize;
 };
 
-module.exports.validateImageSize = validateImageSize;
+const isThereAFaceOnThisImage = () => Promise.resolve(true);
+
+const copyXToY = (from, dest) => new Promise((resolve, reject) => {
+  const readStream = fs.createReadStream(from);
+  readStream.once('error', reject);
+  readStream.once('end', () => {
+    debug('End so Add it to a DB to process later.');
+    return true;
+  });
+  readStream.pipe(fs.createWriteStream(dest));
+});
+
+const resizeAndValidateImg = (original) => {
+  const dest = path.join(__dirname, '../validImg/');
+  validateAndResizeImg(original)
+  .then(resizedImg => isThereAFaceOnThisImage(resizedImg))
+  .then((result) => {
+    if (result) {
+      // copy img (original? or resized?) to a curated folder.
+      return copyXToY(original, dest);
+    }
+    return true;
+  })
+  .catch((err) => {
+    debug('Error in the Img Validation', err);
+    // TODO: Log the error
+  });
+  // Do img Validation on it
+};
+
+module.exports.validateAndResizeImg = validateAndResizeImg;
+module.exports.isThereAFaceOnThisImage = isThereAFaceOnThisImage;
+module.exports.resizeAndValidateImg = resizeAndValidateImg;
