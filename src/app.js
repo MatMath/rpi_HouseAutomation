@@ -11,6 +11,7 @@ const app = express();
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
+// Handle the Blind Open/close flow
 const openAt = 7;
 const closeAt = 18;
 let blindStatus;
@@ -30,10 +31,22 @@ myEmitter.on('closeBlind', () => {
   }
 });
 
-
-
 scheduler(`* ${openAt} * * *`, myEmitter, 'openBlind');
 scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
+
+// Handle the Image Capture flow On Mac (testing) and (Linux real).
+// FFMPG ? Or ??
+
+// Save img/Stream on disk
+
+// Load static Img or Stream and pipe to OpenCV.
+// Problem I suspect: Capture of large image will be too fast for the Pi to actually save and process in real time? -> Need to do load Test.
+
+// Save the "best" frame that the face get detected in (for future email or processing) and drop the rest?
+
+// Upload all img on the server / Dropbox / G.Drive / S3.
+
+// Clean all file older than X day for space. (32G locally).
 
 app.get('/', (req, res) => {
   res.json('Banana');
