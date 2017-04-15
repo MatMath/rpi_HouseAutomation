@@ -7,7 +7,8 @@ const EventEmitter = require('events');
 // Local Dependency
 const { scheduler } = require('./scheduler.js');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
-const { resizeAndValidateImg } = require('./openCVManager.js');
+const { resizeAndValidateImg } = require('./openCVManager');
+const { getAllErrLogs } = require('./sqlightHandler');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
@@ -61,6 +62,8 @@ myEmitter.on('movement', async () => {
 
 // Clean all file older than X day for space. (32G locally).
 
+app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
+app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.get('/', (req, res) => {
   res.json('Banana');
 });

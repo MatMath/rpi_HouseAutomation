@@ -2,6 +2,7 @@ const debug = require('debug')('img');
 const easyimage = require('easyimage');
 const path = require('path');
 const fs = require('fs');
+const { addErrorCode } = require('./sqlightHandler');
 
 const resizeImg = async (imgPath, name) => {
   debug('Resizing ', imgPath);
@@ -48,7 +49,7 @@ const resizeAndValidateImg = (original) => {
   })
   .catch((err) => {
     debug('Error in the Img Validation', err);
-    // TODO: Log the error
+    addErrorCode('Error in the Image Validation', err);
   });
   // Do img Validation on it
 };
