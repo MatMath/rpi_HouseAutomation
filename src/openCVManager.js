@@ -27,19 +27,23 @@ const validateAndResizeImg = async (imgPath) => {
 const isThereAFaceOnThisImage = () => Promise.resolve(true);
 
 const copyXToY = (from, dest) => new Promise((resolve, reject) => {
+  debug(`Copy From ${from} to ${dest}`);
   const readStream = fs.createReadStream(from);
   readStream.once('error', reject);
   readStream.once('end', () => {
     debug('End so Add it to a DB to process later.');
-    return true;
+    return resolve(true);
   });
   readStream.pipe(fs.createWriteStream(dest));
 });
 
 const resizeAndValidateImg = (original) => {
-  const dest = path.join(__dirname, '../validImg/');
+  let dest;
   validateAndResizeImg(original)
-  .then(resizedImg => isThereAFaceOnThisImage(resizedImg))
+  .then((resizedImg) => {
+    dest = path.join(__dirname, '../validImg/', resizedImg.name);
+    return isThereAFaceOnThisImage(resizedImg.path);
+  })
   .then((result) => {
     if (result) {
       // copy img (original? or resized?) to a curated folder.
@@ -54,6 +58,7 @@ const resizeAndValidateImg = (original) => {
   // Do img Validation on it
 };
 
-module.exports.validateAndResizeImg = validateAndResizeImg;
-module.exports.isThereAFaceOnThisImage = isThereAFaceOnThisImage;
+module.exports.validateAndResizeImg = validateAndResizeImg; // not needed but for testing flow.
+module.exports.isThereAFaceOnThisImage = isThereAFaceOnThisImage; // not needed but for testing flow.
 module.exports.resizeAndValidateImg = resizeAndValidateImg;
+module.exports.copyXToY = copyXToY; // not needed but for testing flow.
