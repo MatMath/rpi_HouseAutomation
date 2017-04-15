@@ -1,4 +1,4 @@
-// To use debug: export DEBUG=core,schedule
+// To use debug: export DEBUG=core,schedule,sql,img
 const debug = require('debug')('core');
 const express = require('express');
 const path = require('path');
