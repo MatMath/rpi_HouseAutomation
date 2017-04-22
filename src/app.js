@@ -9,6 +9,7 @@ const { scheduler } = require('./scheduler.js');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
+const { openLight } = require('./lightAction');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
@@ -39,6 +40,8 @@ scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
 
 // On movement
 myEmitter.on('movement', async () => {
+  // Open light
+  openLight();
   // Capture a image. --> ffmpg??
   // Save a image on disk
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)

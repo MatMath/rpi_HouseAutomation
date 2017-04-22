@@ -11,6 +11,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "debug": "^2.6.4",
     "easyimage": "^2.1.0",
     "express": "^4.15.2",
     "node-schedule": "^1.2.1",
