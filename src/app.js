@@ -10,6 +10,7 @@ const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
+const { syncFolder } = require('./fileUpload');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
@@ -38,6 +39,7 @@ myEmitter.on('closeBlind', () => {
 scheduler(`* ${openAt} * * *`, myEmitter, 'openBlind');
 scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
 
+
 // On movement
 myEmitter.on('movement', async () => {
   // Open light
@@ -45,6 +47,7 @@ myEmitter.on('movement', async () => {
   // Capture a image. --> ffmpg??
   // Save a image on disk
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
+  syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
   const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
   // Resize to appropriate level
   // Do img Validation on it

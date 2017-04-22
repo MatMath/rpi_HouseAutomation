@@ -1,5 +1,7 @@
 node_modules/
 outputData/
+rootkey.csv
+.aws_credential.txt
 
 # OS generated files #
 ######################
