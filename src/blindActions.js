@@ -1,8 +1,8 @@
-const {read1Pin , write1Pin} = require('./gpioActions');
-const {blindMotorControl} = require('../config.json');
+const { read1Pin ,write1Pin } = require('./gpioActions');
+const { blindMotorControl } = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
 
-const checkForError = (err, value) => {
+const checkForErrorOrValue = (err, value) => {
   if (err) {
     addErrorCode('Error in the PIN Read', err);
     throw new Error('Bad Pin Readout');
@@ -14,13 +14,20 @@ const checkForError = (err, value) => {
   }
 };
 
+const checkForError = (err) => {
+  if (err) {
+    addErrorCode('Error in the PIN Read', err);
+    throw new Error('Bad Pin Readout');
+  }
+};
+
 const openBlindSequence = () => {
   // Check status of the Blind
   const checkOpenLimitSwitch = (err, value) => {
-    try { checkForError(err, value); } catch (e) { return false; }
+    try { checkForErrorOrValue(err, value); } catch (e) { return false; }
     if (value === true) { return false; } // Safety: Blind already Open
     // Blind not on the Open Limit switch, Open until it click.
-    if (value === false) { write1Pin(blindMotorControl[0].motorOpen); }
+    if (value === false) { write1Pin(blindMotorControl[0].motorOpen, checkForError); }
     return value;
   };
   read1Pin(blindMotorControl[0].openLimitSwitch, checkOpenLimitSwitch);
