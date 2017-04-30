@@ -1,5 +1,4 @@
-const { read1Pin ,write1Pin } = require('./gpioActions');
-const { blindMotorControl } = require('../config.json');
+const { read1Pin, write1Pin } = require('./gpioActions');
 const { addErrorCode } = require('./sqlightHandler');
 
 const checkForErrorOrValue = (err, value) => {
@@ -21,22 +20,33 @@ const checkForError = (err) => {
   }
 };
 
-const openBlindSequence = () => {
+const openBlindSequence = (motorPinoutData) => {
   // Check status of the Blind
   const checkOpenLimitSwitch = (err, value) => {
     try { checkForErrorOrValue(err, value); } catch (e) { return false; }
     if (value === true) { return false; } // Safety: Blind already Open
     // Blind not on the Open Limit switch, Open until it click.
-    if (value === false) { write1Pin(blindMotorControl[0].motorOpen, checkForError); }
+    if (value === false) { write1Pin(motorPinoutData.motorOpen, checkForError); }
     return value;
   };
-  read1Pin(blindMotorControl[0].openLimitSwitch, checkOpenLimitSwitch);
+  read1Pin(motorPinoutData.openLimitSwitch, checkOpenLimitSwitch);
   // If Open then power the motor to turn (right direction)
   // At limit switch Turn off.
   return true;
 };
 
-const closeBlindSequence = () => {
+const closeBlindSequence = (motorPinoutData) => {
+  // Check status of the Blind
+  const checkOpenLimitSwitch = (err, value) => {
+    try { checkForErrorOrValue(err, value); } catch (e) { return false; }
+    if (value === true) { return false; } // Safety: Blind already Open
+    // Blind not on the Open Limit switch, Open until it click.
+    if (value === false) { write1Pin(motorPinoutData.motorClose, checkForError); }
+    return value;
+  };
+  read1Pin(motorPinoutData.closeLimitSwitch, checkOpenLimitSwitch);
+  // If Open then power the motor to turn (right direction)
+  // At limit switch Turn off.
   return true;
 };
 

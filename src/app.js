@@ -11,6 +11,7 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
+const config = require('../config.json');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
@@ -23,7 +24,10 @@ let blindStatus;
 myEmitter.on('openBlind', () => {
   debug('Will Open the blind Now');
   if (blindStatus !== 'open') {
-    openBlindSequence();
+    // Open All Blind
+    for (let i = 0; i < config.blindMotorControl.length; i++) {
+      openBlindSequence(config.blindMotorControl[i]);
+    }
     blindStatus = 'open';
   }
 });
@@ -31,7 +35,9 @@ myEmitter.on('openBlind', () => {
 myEmitter.on('closeBlind', () => {
   debug('Will Close the blind Now');
   if (blindStatus !== 'closed') {
-    closeBlindSequence();
+    for (let i = 0; i < config.blindMotorControl.length; i++) {
+      closeBlindSequence(config.blindMotorControl[i]);
+    }
     blindStatus = 'closed';
   }
 });
