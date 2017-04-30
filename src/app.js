@@ -76,8 +76,17 @@ myEmitter.on('movement', async () => {
 
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
+app.get('/light', () => { openLight(); });
+app.get('/motor/open/:id', (req) => {
+  const id = parseInt(req.params.id, 10);
+  openBlindSequence(config.blindMotorControl[id]);
+});
+app.get('/motor/close/:id', (req) => {
+  const id = parseInt(req.params.id, 10);
+  closeBlindSequence(config.blindMotorControl[id]);
+});
 app.get('/', (req, res) => {
-  res.json('Banana');
+  res.json(['logs', '/logs/delete', '/light', '/motor/open/:id', '/motor/close/:id']);
 });
 
 module.exports = app;
