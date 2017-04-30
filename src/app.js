@@ -18,8 +18,6 @@ class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
 // Handle the Blind Open/close flow
-const openAt = 7;
-const closeAt = 18;
 let blindStatus;
 myEmitter.on('openBlind', () => {
   debug('Will Open the blind Now');
@@ -42,8 +40,8 @@ myEmitter.on('closeBlind', () => {
   }
 });
 
-scheduler(`* ${openAt} * * *`, myEmitter, 'openBlind');
-scheduler(`* ${closeAt} * * *`, myEmitter, 'closeBlind');
+scheduler(`* ${config.openMorningAt} * * *`, myEmitter, 'openBlind');
+scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 
 
 // On movement
