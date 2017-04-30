@@ -4,13 +4,17 @@
 // Other All in 1 possibility: https://www.sparkfun.com/products/10747
 
 const debug = require('debug')('light');
+const { lightOpenSSR } = require('../config.json');
+const { write1Pin } = require('./gpioActions');
 
 const closeLight = () => {
   debug(`Close light ${new Date()}`);
+  write1Pin(lightOpenSSR, false);
 };
 
 const openLight = () => {
   debug(`Open light ${new Date()}`);
+  write1Pin(lightOpenSSR, true);
   setTimeout(() => {
     closeLight();
   }, 30000);
