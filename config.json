@@ -2,7 +2,7 @@
   "openMorningAt": 7,
   "closeEveningAt": 19,
   "doorMovementDetectionPin":7,
-  "lightOpenSSR": 30,
+  "lightOpenSSR": 21,
   "blindMotorControl": [
     {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5},
     {"motorOpen":4, "motorClose":3, "openLimitSwitch": 6, "closeLimitSwitch": 5}
