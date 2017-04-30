@@ -27,11 +27,15 @@ function writeCallback(err) {
 }
 
 const read1Pin = (nbr) => {
-  gpio.setup(nbr, gpio.DIR_IN, gpio.read(nbr, readCallback));
+  debug(`Read Pin ${nbr}`);
+  function readInput() { gpio.read(nbr, readCallback); } // Need to be encapsulated in a function Scope Stuff.
+  gpio.setup(nbr, gpio.DIR_IN, readInput);
 };
 
 const write1Pin = (nbr, value) => {
-  gpio.setup(nbr, gpio.DIR_OUT, gpio.write(nbr, value, writeCallback));
+  debug(`Write Pin ${nbr} at ${value}`);
+  function writeInput() { gpio.write(nbr, value, writeCallback); } // Need to be encapsulated in a function Scope Stuff.
+  gpio.setup(nbr, gpio.DIR_OUT, writeInput);
 };
 
 const listenOnPinChange = (nbr) => {
