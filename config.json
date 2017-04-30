@@ -8,6 +8,6 @@
     {"motorOpen":4, "motorClose":3, "openLimitSwitch": 6, "closeLimitSwitch": 5}
   ],
   "processorFanPin": 13,
-  "note": "The Processor Fan is because I want to control a FAN to cool the processor, but only when the PI is doing real work like OpenCV and not all the time."
+  "note": "The Processor Fan is because I want to control a FAN to cool the processor, but only when the PI is doing real work like OpenCV and not all the time.",
   "possiblePinout": "2 to 27 out of 40 pins"
 }

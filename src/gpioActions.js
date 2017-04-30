@@ -1,10 +1,11 @@
 // TODO: Handle initilaisation/reset Flow
 const debug = require('debug')('gpio');
+const EventEmitter = require('events');
+
+const config = require('../config.json');
 const gpio = require('rpi-gpio');
 const { addErrorCode } = require('./sqlightHandler');
-const config = require('../config.json');
 
-const EventEmitter = require('events');
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 

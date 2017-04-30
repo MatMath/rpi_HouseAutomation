@@ -5,7 +5,7 @@ const path = require('path');
 const EventEmitter = require('events');
 
 // Local Dependency
-const { scheduler } = require('./scheduler.js');
+const { scheduler } = require('./scheduler');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
