@@ -6,9 +6,6 @@ const EventEmitter = require('events');
 const config = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
 
-class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
-
 const read1Pin = (nbr) => {
   debug(`Read Pin ${nbr}`);
   return new Promise((resolve, reject) => {
@@ -53,27 +50,30 @@ const validateMotorActions = (obj) => {
   });
 };
 
-const listenToDoor = (nbr) => {
+const listenToDoor = (nbr, event) => {
   read1Pin(nbr)
   .then((value) => {
     if (value === 1) {
       // Opent he light / Start Camera flow
       debug('Door Movement detected');
-      myEmitter.emit('movement');  // TODO Not send every sec but have a buffer.
+      event.emit('movement');  // TODO Not send every sec but have a buffer.
     }
   });
 };
 
-const monitorAllPins = () => {
+const monitorAllPins = (event) => {
   setInterval(() => {
     for (let i = 0; i < config.blindMotorControl.length; i++) {
       validateMotorActions(config.blindMotorControl[i]); // TODO Improve this to not write every time but work with a Event Listener.
-      listenToDoor(config.doorMovementDetectionPin);
+      listenToDoor(config.doorMovementDetectionPin, event);
     }
   }, 1000);
 };
 
-monitorAllPins();
+// TODO: Put motor on a Promise.All with a timeout that close everything.
+// Movement detector should be monitored better.
+
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
+module.exports.monitorAllPins = monitorAllPins;

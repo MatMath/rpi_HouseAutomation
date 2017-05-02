@@ -11,11 +11,14 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
+const { monitorAllPins } = require('./gpioActions');
 const config = require('../config.json');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
+
+monitorAllPins(myEmitter);
 
 // Handle the Blind Open/close flow
 let blindStatus;
@@ -47,6 +50,7 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 // On movement
 myEmitter.on('movement', async () => {
   // Open light
+  debug('Movement detected');
   openLight();
   // Capture a image. --> ffmpg??
   // Save a image on disk
