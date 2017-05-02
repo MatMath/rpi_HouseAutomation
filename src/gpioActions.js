@@ -9,11 +9,6 @@ const { addErrorCode } = require('./sqlightHandler');
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
-const waitxSec = (x) => new Promise((resolve) => {
-  console.log(`I will wait ${x} sec`);
-  setTimeout(resolve, x * 1000);
-});
-
 const read1Pin = (nbr) => {
   debug(`Read Pin ${nbr}`);
   return new Promise((resolve, reject) => {
@@ -40,20 +35,45 @@ const write1Pin = (nbr, value) => {
   });
 };
 
-const listenOnPinChange = (nbr) => {
-  const channel = '';
-  console.log(`Channel ${channel} value is now  ${value}`);
-  // TODO: Add logic here depending on what I have in the Config.
-  if (channel === config.doorMovementDetectionPin) {
-    // Opent he light/ Start Camera flow
-    myEmitter.emit('movement');
-  }
-  // TODO: Make a loop here to valisate all cases.
-  if (channel === config.blindMotorControl[0].openLimitSwitch) {
-    debug('Limit reached, Stop motor');
-  }
+const validateMotorActions = (obj) => {
+  // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}
+  read1Pin(obj.openLimitSwitch)
+  .then((value) => {
+    if (value === 1) {
+      debug('Limit reached, Stop motor');
+      write1Pin(obj.motorOpen, 0);
+    } // Stop Motor
+  })
+  .then(() => read1Pin(obj.openLimitSwitch))
+  .then((value) => {
+    if (value === 1) {
+      debug('Limit reached, Stop motor');
+      write1Pin(obj.motorClose, 0);
+    } // stop motor
+  });
 };
+
+const listenToDoor = (nbr) => {
+  read1Pin(nbr)
+  .then((value) => {
+    if (value === 1) {
+      // Opent he light / Start Camera flow
+      debug('Door Movement detected');
+      myEmitter.emit('movement');  // TODO Not send every sec but have a buffer.
+    }
+  });
+};
+
+const monitorAllPins = () => {
+  setInterval(() => {
+    for (let i = 0; i < config.blindMotorControl.length; i++) {
+      validateMotorActions(config.blindMotorControl[i]); // TODO Improve this to not write every time but work with a Event Listener.
+      listenToDoor(config.doorMovementDetectionPin);
+    }
+  }, 1000);
+};
+
+monitorAllPins();
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
-module.exports.listenOnPinChange = listenOnPinChange;
