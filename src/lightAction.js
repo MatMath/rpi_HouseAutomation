@@ -9,12 +9,12 @@ const { write1Pin } = require('./gpioActions');
 
 const closeLight = () => {
   debug(`Close light ${new Date()}`);
-  write1Pin(lightOpenSSR, false);
+  write1Pin(lightOpenSSR, 0);
 };
 
 const openLight = () => {
   debug(`Open light ${new Date()}`);
-  write1Pin(lightOpenSSR, true);
+  write1Pin(lightOpenSSR, 1);
   setTimeout(() => {
     closeLight();
   }, 30000);

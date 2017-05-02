@@ -40,3 +40,13 @@ But this only give me Node 4.2.6. To have the latest version you can use "nvm" o
 
 ## Problem:
 At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error
+
+
+## GPIO Problems:
+I tried hard to make rpi-gpio or pi-gpio work and no success. I was able to read but not to write even in sudo so after a while I gave up and switch tactics (almost switch to python :| ).
+I will use the Command line with:
+- git clone git://git.drogon.net/wiringPi
+- cd wiringPi
+- ./build
+And using it with: gpio -v, gpio readall, gpio -g mode 2 out, gpio -g write 2 1
+Benefit: I don't have to use sudo anymore.
