@@ -2,12 +2,10 @@ const debug = require('debug')('sql');
 const fs = require('fs');
 
 const base = './src/db/';
+if (!fs.existsSync(base)) { fs.mkdir(base); }
 const dbName = 'localinfo';
 const sqlite3 = require('sqlite3').verbose();
-// Notes: sqlite3 is just Junk, this is why:
-// - Opening and closing the DB will break it if 2 open at the same time (same Node instance).
-// - Serialised dosent even do sequence of event. I was planning to use db.close(), but that close the MAIN Db and not just the Cashed version.
-// When it fail it dosent propagate error (sometime crash and dosent tell).
+// Notes: sqlite3 is far from the best, but at least to handle some logs and track suff it is ok(ish).
 
 const getFullPath = () => {
   // using EnvVar to be able to bypass the DB Creation at the start.

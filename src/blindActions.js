@@ -1,4 +1,4 @@
-const { read1Pin, write1Pin } = require('./gpioActions');
+const { read1Pin, write1Pin, monitorMotorsPins } = require('./gpioActions');
 const { addErrorCode } = require('./sqlightHandler');
 
 const openBlindSequence = (motorPinoutData) => {
@@ -9,7 +9,8 @@ const openBlindSequence = (motorPinoutData) => {
     return write1Pin(motorPinoutData.motorOpen, 1); // Blind not on the Open Limit switch, Open until it click.
   })
   .catch(err => addErrorCode('Error in the PIN Read', err));
-  // At the limit the switch will Turn off (check loop in GPIO).
+  // At the limit the switch will Turn off
+  monitorMotorsPins();
 
   // Safety: In case of defect
   setTimeout(() => {
@@ -26,6 +27,7 @@ const closeBlindSequence = (motorPinoutData) => {
   })
   .catch(err => addErrorCode('Error in the PIN Read', err));
   // At limit switch Turn off.
+  monitorMotorsPins();
 
   // Safety: In case of defect
   setTimeout(() => {

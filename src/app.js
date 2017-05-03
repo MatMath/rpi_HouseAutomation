@@ -11,14 +11,14 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { monitorAllPins } = require('./gpioActions');
+const { listenToDoor } = require('./gpioActions');
 const config = require('../config.json');
 
 const app = express();
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
-monitorAllPins(myEmitter);
+listenToDoor(myEmitter);
 
 // Handle the Blind Open/close flow
 let blindStatus;

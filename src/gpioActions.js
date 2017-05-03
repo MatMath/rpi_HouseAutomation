@@ -1,10 +1,11 @@
 // TODO: Handle initilaisation/reset Flow
 const debug = require('debug')('gpio');
 const exec = require('child_process').exec;
-const EventEmitter = require('events');
 
 const config = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
+
+let movementDetected;
 
 const read1Pin = (nbr) => {
   debug(`Read Pin ${nbr}`);
@@ -14,7 +15,7 @@ const read1Pin = (nbr) => {
         addErrorCode('ReadError', JSON.stringify({ nbr }));
         return reject();
       }
-      return resolve(stdout);
+      return resolve(parseInt(stdout, 10));
     });
   });
 };
@@ -50,22 +51,27 @@ const validateMotorActions = (obj) => {
   });
 };
 
-const listenToDoor = (nbr, event) => {
-  read1Pin(nbr)
-  .then((value) => {
-    if (value === 1) {
-      // Opent he light / Start Camera flow
-      debug('Door Movement detected');
-      event.emit('movement');  // TODO Not send every sec but have a buffer.
-    }
-  });
+const listenToDoor = (event) => {
+  // TODO: Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
+  setInterval(() => {
+    read1Pin(config.doorMovementDetectionPin)
+    .then((value) => {
+      if (value === 1) {
+        // Opent he light / Start Camera flow
+        debug('Door Movement detected');
+        if (movementDetected < Date.now()) { // Buffer so we dont call every second.
+          movementDetected = Date.now() + 30000;
+          event.emit('movement');
+        }
+      }
+    });
+  }, 500);
 };
 
-const monitorAllPins = (event) => {
+const monitorMotorsPins = () => {
   setInterval(() => {
     for (let i = 0; i < config.blindMotorControl.length; i++) {
       validateMotorActions(config.blindMotorControl[i]); // TODO Improve this to not write every time but work with a Event Listener.
-      listenToDoor(config.doorMovementDetectionPin, event);
     }
   }, 1000);
 };
@@ -76,4 +82,5 @@ const monitorAllPins = (event) => {
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
-module.exports.monitorAllPins = monitorAllPins;
+module.exports.listenToDoor = listenToDoor;
+module.exports.monitorMotorsPins = monitorMotorsPins;
