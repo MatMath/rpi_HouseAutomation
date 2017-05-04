@@ -5,7 +5,16 @@ const exec = require('child_process').exec;
 const config = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
 
-let movementDetected;
+let movementDetected = 0;
+
+const loadtimeSetup = (nbr) => {
+  exec(`'gpio export out' ${nbr}`, (error, stdout, stderr) => {
+    if (error || stderr) { addErrorCode('WriteError', JSON.stringify({ nbr })); }
+  });
+};
+
+// Some pins need to be setup at load time for Out and In and the default value.
+loadtimeSetup(4);
 
 const read1Pin = (nbr) => {
   debug(`Read Pin ${nbr}`);

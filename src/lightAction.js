@@ -6,6 +6,7 @@
 const debug = require('debug')('light');
 const { lightOpenSSR } = require('../config.json');
 const { write1Pin } = require('./gpioActions');
+const { doorMovement } = require('./sqlightHandler');
 
 const closeLight = () => {
   debug(`Close light ${new Date()}`);
@@ -14,6 +15,7 @@ const closeLight = () => {
 
 const openLight = () => {
   debug(`Open light ${new Date()}`);
+  doorMovement();
   write1Pin(lightOpenSSR, 1);
   setTimeout(() => {
     closeLight();

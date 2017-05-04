@@ -19,6 +19,7 @@ const generateDBAndTable = fullPath => new Promise((resolve, reject) => {
   const cashDb = new sqlite3.cached.Database(fullPath);
     // cashDb.on('error', (err)=>{ debug('ERROR in cashDb ', err); }); Cannot be use since it will be active no matter where it fail. (dosent have closure)
   cashDb.serialize(() => {
+    cashDb.run('CREATE TABLE doormovement (evenementAt DATE)');
     cashDb.run('CREATE TABLE errorlogs (message TEXT, code TEXT)', [], (e) => {
       debug('resolving the LAST function called', e);
       if (e) { reject(e); }
@@ -75,7 +76,13 @@ const getAllErrLogs = (deleteTag) => {
   });
 };
 
+const doorMovement = () => {
+  const cashDb = buildOrGetDb();
+  cashDb.run('INSERT INTO doormovement ( doormovement ) VALUES (?)', [Date.now()]);
+};
+
 module.exports.generateDBAndTable = generateDBAndTable;
 
 module.exports.addErrorCode = addErrorCode;
 module.exports.getAllErrLogs = getAllErrLogs;
+module.exports.doorMovement = doorMovement;
