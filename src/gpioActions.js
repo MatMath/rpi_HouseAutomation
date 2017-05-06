@@ -1,20 +1,36 @@
-// TODO: Handle initilaisation/reset Flow
+// NOTE: use the -i instead of -g to use the physical pin instead of GPIO. see drogon.net/
+
 const debug = require('debug')('gpio');
-const exec = require('child_process').exec;
+const { exec, execSync } = require('child_process');
 
 const config = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
 
 let movementDetected = 0;
 
-const loadtimeSetup = (nbr) => {
-  exec(`'gpio export out' ${nbr}`, (error, stdout, stderr) => {
-    if (error || stderr) { addErrorCode('WriteError', JSON.stringify({ nbr })); }
-  });
+const loadtimeSetup = (nbr, inOut) => {
+  try {
+    execSync(`gpio export ${inOut} ${nbr}`);
+    if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
+  } catch (e) {
+    addErrorCode('WriteError', JSON.stringify({ nbr }));
+  }
 };
 
 // Some pins need to be setup at load time for Out and In and the default value.
-loadtimeSetup(4);
+function init() {
+  loadtimeSetup(config.doorMovementDetectionPin, 'in');
+  loadtimeSetup(config.lightOpenSSR, 'out');
+  loadtimeSetup(config.processorFanPin, 'out');
+  for (let i = 0; i < config.blindMotorControl.length; i++) {
+    const blind = config.blindMotorControl[i];
+    loadtimeSetup(blind.motorOpen, 'out');
+    loadtimeSetup(blind.motorClose, 'out');
+    loadtimeSetup(blind.openLimitSwitch, 'in');
+    loadtimeSetup(blind.closeLimitSwitch, 'in');
+  }
+}
+init();
 
 const read1Pin = (nbr) => {
   debug(`Read Pin ${nbr}`);
@@ -74,7 +90,7 @@ const listenToDoor = (event) => {
         }
       }
     });
-  }, 500);
+  }, 200);
 };
 
 const monitorMotorsPins = () => {
@@ -85,11 +101,21 @@ const monitorMotorsPins = () => {
   }, 1000);
 };
 
+const startProcessorFan = () => {
+  // This could be a move to the app section, but in case we have a more complex Start-Stop fan setup we have the flexibility.
+  write1Pin(config.processorFanPin, 1);
+};
+
+const stopProcessorFan = () => {
+  write1Pin(config.processorFanPin, 0);
+};
+
 // TODO: Put motor on a Promise.All with a timeout that close everything.
 // Movement detector should be monitored better.
-
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
 module.exports.listenToDoor = listenToDoor;
 module.exports.monitorMotorsPins = monitorMotorsPins;
+module.exports.startProcessorFan = startProcessorFan;
+module.exports.stopProcessorFan = stopProcessorFan;

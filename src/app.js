@@ -11,7 +11,7 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { listenToDoor } = require('./gpioActions');
+const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
 const config = require('../config.json');
 
 const app = express();
@@ -51,6 +51,8 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 myEmitter.on('movement', async () => {
   // Open light
   debug('Movement detected');
+  startProcessorFan(); // Processor will do OpenCV so it will need to cool down.
+  setTimeout(stopProcessorFan, 30000);
   openLight();
   // Capture a image. --> ffmpg??
   // Save a image on disk
