@@ -12,7 +12,7 @@ const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
-const { addErrorCode } = require('./sqlightHandler')
+const { addErrorCode, getDoorMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 
 const app = express();
@@ -54,13 +54,14 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 myEmitter.on('movement', async () => {
   // Open light
   debug('Movement detected');
+  addErrorCode('Movement detected', 'NA', 'INFO');
   startProcessorFan(); // Processor will do OpenCV so it will need to cool down.
   setTimeout(stopProcessorFan, 30000);
   openLight();
   // Capture a image. --> ffmpg??
   // Save a image on disk
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
-  syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
+  // syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
   const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
   // Resize to appropriate level
   // Do img Validation on it
@@ -83,7 +84,8 @@ myEmitter.on('movement', async () => {
 
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
-app.get('/light', () => { openLight(); });
+app.get('/openlight', (req, res) => { openLight(); res.json(true); });
+app.get('/getDoorMovement', (req, res) => { getDoorMovement().then(logs => res.json(logs)); });
 app.get('/motor/open/:id', (req) => {
   const id = parseInt(req.params.id, 10);
   openBlindSequence(config.blindMotorControl[id]);
@@ -93,7 +95,7 @@ app.get('/motor/close/:id', (req) => {
   closeBlindSequence(config.blindMotorControl[id]);
 });
 app.get('/', (req, res) => {
-  res.json(['logs', '/logs/delete', '/light', '/motor/open/:id', '/motor/close/:id']);
+  res.json(['logs', '/logs/delete', '/openlight', '/motor/open/:id', '/motor/close/:id', '/getDoorMovement']);
 });
 
 module.exports = app;

@@ -74,8 +74,19 @@ const doorMovement = () => {
   cashDb.run('INSERT INTO doormovement ( evenementAt ) VALUES (?)', [Date.now()]);
 };
 
+const getDoorMovement = () => {
+  const cashDb = buildOrGetDb();
+  return new Promise((resolve, reject) => {
+    cashDb.all('SELECT * FROM doormovement', [], (e, row) => {
+      if (e) { reject(e); }
+      return resolve(row);
+    });
+  });
+};
+
 module.exports.generateDBAndTable = generateDBAndTable;
 
 module.exports.addErrorCode = addErrorCode;
 module.exports.getAllErrLogs = getAllErrLogs;
 module.exports.doorMovement = doorMovement;
+module.exports.getDoorMovement = getDoorMovement;
