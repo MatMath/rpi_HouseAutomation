@@ -1,6 +1,6 @@
 // The damn sqlite3 dosent work well with the test. Since it get created at script launch it get created in the other test at the same time as this test so one in Readonly and the ohter is the master.
 // even if I change the EnvVar, all the script get evaluated once before we start.
-// So the EndToEndTest cannot be run at the same time as the SqlightHadler test. Both work but separately.
+// So the EndToEndTest cannot be run at the same time as the SqlightHandler test. Both work but separately.
 
 const expect = require('expect.js');
 const fs = require('fs');
@@ -37,7 +37,7 @@ describe('Testing the sqlite3 structure', () => {
 
   it('Test the Single entry or Error code', (done) => {
     const errStack = `Banana in a string${new Date()}`;
-    addErrorCode('this is a message', errStack)
+    addErrorCode('this is a message', errStack, 'WARNING')
     .then(getAllErrLogs)
     .then((data) => {
       expect(data[0].code).to.equal(errStack);
@@ -55,12 +55,12 @@ describe('Testing the sqlite3 structure', () => {
       { msg: 'msg6', code: 'code6' },
     ];
     Promise.all([
-      addErrorCode(arrOfError[0].msg, arrOfError[0].code),
-      addErrorCode(arrOfError[1].msg, arrOfError[1].code),
-      addErrorCode(arrOfError[2].msg, arrOfError[2].code),
-      addErrorCode(arrOfError[3].msg, arrOfError[3].code),
-      addErrorCode(arrOfError[4].msg, arrOfError[4].code),
-      addErrorCode(arrOfError[5].msg, arrOfError[5].code),
+      addErrorCode(arrOfError[0].msg, arrOfError[0].code, 'WARNING'),
+      addErrorCode(arrOfError[1].msg, arrOfError[1].code, 'WARNING'),
+      addErrorCode(arrOfError[2].msg, arrOfError[2].code, 'WARNING'),
+      addErrorCode(arrOfError[3].msg, arrOfError[3].code, 'WARNING'),
+      addErrorCode(arrOfError[4].msg, arrOfError[4].code, 'WARNING'),
+      addErrorCode(arrOfError[5].msg, arrOfError[5].code, 'WARNING'),
     ])
     .then(getAllErrLogs)
     .then((data) => {

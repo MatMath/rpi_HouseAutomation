@@ -20,7 +20,7 @@ const generateDBAndTable = fullPath => new Promise((resolve, reject) => {
     // cashDb.on('error', (err)=>{ debug('ERROR in cashDb ', err); }); Cannot be use since it will be active no matter where it fail. (dosent have closure)
   cashDb.serialize(() => {
     cashDb.run('CREATE TABLE doormovement (evenementAt DATE)');
-    cashDb.run('CREATE TABLE errorlogs (message TEXT, code TEXT)', [], (e) => {
+    cashDb.run('CREATE TABLE errorlogs (message TEXT, code TEXT, severity TEXT, event_date DATE)', [], (e) => {
       debug('resolving the LAST function called', e);
       if (e) { reject(e); }
       resolve();
@@ -40,22 +40,15 @@ const buildOrGetDb = () => {
   return new sqlite3.cached.Database(fullPath);
 };
 
-const addErrorCode = (message, code) => {
+const addErrorCode = (message, code, severity) => {
   let codeString = code;
   if (typeof code !== 'string') { codeString = JSON.stringify(code); }
   const tablename = 'errorlogs';
   return new Promise((resolve, reject) => {
     const cashDb = buildOrGetDb();
-    cashDb.serialize(() => {
-      const stmt = cashDb.prepare(`INSERT INTO ${tablename} (message, code) VALUES (?, ?)`);
-      stmt.run(message, codeString);
-      stmt.finalize();
-
-      cashDb.each(`SELECT rowid AS id, message, code FROM ${tablename}`, [], (e) => {
-        // debug('SELECT:', row, e);
-        if (e) { reject(e); }
-        resolve();
-      });
+    cashDb.run(`INSERT INTO ${tablename} (message, code, severity, event_date) VALUES (?, ?, ?, ?)`, [message, codeString, severity, Date.now()], (e) => {
+      if (e) { return reject(e); }
+      return resolve();
     });
   });
 };

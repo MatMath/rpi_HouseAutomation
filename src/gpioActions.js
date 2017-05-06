@@ -13,7 +13,7 @@ const loadtimeSetup = (nbr, inOut) => {
     execSync(`gpio export ${inOut} ${nbr}`);
     if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
   } catch (e) {
-    addErrorCode('WriteError', JSON.stringify({ nbr }));
+    addErrorCode('WriteError', JSON.stringify({ nbr }), 'WARNING');
   }
 };
 
@@ -37,7 +37,7 @@ const read1Pin = (nbr) => {
   return new Promise((resolve, reject) => {
     exec(`gpio -g read ${nbr}`, (error, stdout, stderr) => {
       if (error || stderr) {
-        addErrorCode('ReadError', JSON.stringify({ nbr }));
+        addErrorCode('ReadError', JSON.stringify({ nbr }), 'WARNING');
         return reject();
       }
       return resolve(parseInt(stdout, 10));
@@ -50,7 +50,7 @@ const write1Pin = (nbr, value) => {
   return new Promise((resolve, reject) => {
     exec(`gpio -g write ${nbr} ${value}`, (error, stdout, stderr) => {
       if (error || stderr) {
-        addErrorCode('WriteError', JSON.stringify({ nbr, value }));
+        addErrorCode('WriteError', JSON.stringify({ nbr, value }), 'WARNING');
         return reject();
       }
       return resolve(stdout);

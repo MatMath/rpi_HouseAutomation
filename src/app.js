@@ -24,6 +24,7 @@ listenToDoor(myEmitter);
 let blindStatus;
 myEmitter.on('openBlind', () => {
   debug('Will Open the blind Now');
+  addErrorCode('Open the Blind', 'NA', 'INFO');
   if (blindStatus !== 'open') {
     // Open All Blind
     for (let i = 0; i < config.blindMotorControl.length; i++) {
@@ -35,6 +36,7 @@ myEmitter.on('openBlind', () => {
 
 myEmitter.on('closeBlind', () => {
   debug('Will Close the blind Now');
+  addErrorCode('Close the Blind', 'NA', 'INFO');
   if (blindStatus !== 'closed') {
     for (let i = 0; i < config.blindMotorControl.length; i++) {
       closeBlindSequence(config.blindMotorControl[i]);
@@ -61,7 +63,7 @@ myEmitter.on('movement', async () => {
   const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
   // Resize to appropriate level
   // Do img Validation on it
-  resizeAndValidateImg(imgPath); // This will run on each image that get in in paralle.
+  // resizeAndValidateImg(imgPath); // This will run on each image that get in in paralle.
 });
 
 // Handle the Image Capture flow On Mac (testing) and (Linux real).

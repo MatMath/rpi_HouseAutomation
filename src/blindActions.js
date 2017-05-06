@@ -8,7 +8,7 @@ const openBlindSequence = (motorPinoutData) => {
     if (value === true) { return false; } // Safety: Blind already Open
     return write1Pin(motorPinoutData.motorOpen, 1); // Blind not on the Open Limit switch, Open until it click.
   })
-  .catch(err => addErrorCode('Error in the PIN Read', err));
+  .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At the limit the switch will Turn off
   monitorMotorsPins();
 
@@ -25,7 +25,7 @@ const closeBlindSequence = (motorPinoutData) => {
     if (value === true) { return false; } // Safety: Blind already Close
     return write1Pin(motorPinoutData.motorClose, 1); // Blind not on the Close Limit switch, Close until it click.
   })
-  .catch(err => addErrorCode('Error in the PIN Read', err));
+  .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At limit switch Turn off.
   monitorMotorsPins();
 

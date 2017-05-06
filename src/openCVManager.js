@@ -53,7 +53,7 @@ const resizeAndValidateImg = (original) => {
   })
   .catch((err) => {
     debug('Error in the Img Validation', err);
-    addErrorCode('Error in the Image Validation', err);
+    addErrorCode('Error in the Image Validation', err, 'WARNING');
   });
   // Do img Validation on it
 };
