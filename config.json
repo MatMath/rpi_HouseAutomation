@@ -2,12 +2,12 @@
   "openMorningAt": 7,
   "closeEveningAt": 19,
   "doorMovementDetectionPin": 17,
-  "lightOpenSSR": 4,
+  "lightOpenSSR": 21,
   "blindMotorControl": [
     {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5},
     {"motorOpen":4, "motorClose":3, "openLimitSwitch": 6, "closeLimitSwitch": 5}
   ],
-  "processorFanPin": 13,
+  "processorFanPin": 22,
   "note": "The Processor Fan is because I want to control a FAN to cool the processor, but only when the PI is doing real work like OpenCV and not all the time.",
   "possiblePinout": "2 to 27 out of 40 pins"
 }

@@ -85,7 +85,7 @@ const listenToDoor = (event) => {
         // Opent he light / Start Camera flow
         debug('Door Movement detected');
         if (movementDetected < Date.now()) { // Buffer so we dont call every second.
-          movementDetected = Date.now() + 30000;
+          movementDetected = Date.now() + config.lightOpen_ms;
           event.emit('movement');
         }
       }
