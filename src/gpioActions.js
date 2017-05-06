@@ -10,7 +10,7 @@ let movementDetected = 0;
 
 const loadtimeSetup = (nbr, inOut) => {
   try {
-    execSync(`gpio export ${inOut} ${nbr}`);
+    execSync(`gpio export ${nbr} ${inOut}`);
     if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
   } catch (e) {
     addErrorCode('WriteError', JSON.stringify({ nbr }), 'WARNING');

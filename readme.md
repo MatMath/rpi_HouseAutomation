@@ -48,5 +48,6 @@ I will use the Command line with:
 - git clone git://git.drogon.net/wiringPi
 - cd wiringPi
 - ./build
-And using it with: gpio -v, gpio readall, gpio -g mode 2 out, gpio -g write 2 1
+And using it with: gpio -v, gpio readall, gpio -g mode 2 out, gpio -g write 2 1   (see more at http://wiringpi.com/the-gpio-utility/)
 Benefit: I don't have to use sudo anymore.
+Problem: I don't have an event emitter I have to loop check. 

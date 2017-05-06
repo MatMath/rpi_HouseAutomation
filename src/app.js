@@ -12,6 +12,7 @@ const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
+const { addErrorCode } = require('./sqlightHandler')
 const config = require('../config.json');
 
 const app = express();

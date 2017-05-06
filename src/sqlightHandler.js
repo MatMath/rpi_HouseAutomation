@@ -71,7 +71,7 @@ const getAllErrLogs = (deleteTag) => {
 
 const doorMovement = () => {
   const cashDb = buildOrGetDb();
-  cashDb.run('INSERT INTO doormovement ( doormovement ) VALUES (?)', [Date.now()]);
+  cashDb.run('INSERT INTO doormovement ( evenementAt ) VALUES (?)', [Date.now()]);
 };
 
 module.exports.generateDBAndTable = generateDBAndTable;
