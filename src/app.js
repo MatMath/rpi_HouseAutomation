@@ -1,8 +1,12 @@
 // To use debug: export DEBUG=core,schedule,sql,img,gpio
 const debug = require('debug')('core');
 const express = require('express');
+const helmet = require('helmet');
 const path = require('path');
 const EventEmitter = require('events');
+
+const app = express();
+app.use(helmet());
 
 // Local Dependency
 const { scheduler } = require('./scheduler');
@@ -15,7 +19,6 @@ const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioAct
 const { addErrorCode, getDoorMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 
-const app = express();
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
