@@ -18,6 +18,7 @@ const { syncFolder } = require('./fileUpload');
 const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
 const { addErrorCode, getDoorMovement } = require('./sqlightHandler');
 const config = require('../config.json');
+const userControls = require('./userControls');
 
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
@@ -87,23 +88,15 @@ myEmitter.on('movement', async () => {
 
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
-app.get('/openlight', (req, res) => { openLight(); res.json(true); });
+app.use('/actions', userControls);
 app.get('/getDoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
     timestamp: item.doormovement,
     humanReadable: new Date(item.doormovement),
   }))));
 });
-app.get('/motor/open/:id', (req) => {
-  const id = parseInt(req.params.id, 10);
-  openBlindSequence(config.blindMotorControl[id]);
-});
-app.get('/motor/close/:id', (req) => {
-  const id = parseInt(req.params.id, 10);
-  closeBlindSequence(config.blindMotorControl[id]);
-});
 app.get('/', (req, res) => {
-  res.json(['logs', '/logs/delete', '/openlight', '/motor/open/:id', '/motor/close/:id', '/getDoorMovement']);
+  res.json(['/logs', '/logs/delete', '/actions', '/getDoorMovement']);
 });
 
 module.exports = app;

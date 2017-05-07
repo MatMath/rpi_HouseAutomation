@@ -61,7 +61,7 @@ const getAllErrLogs = (deleteTag) => {
       if (deleteTag === true) {
         cashDb.run(`DELETE FROM ${tablename}`);
       }
-      cashDb.all(`SELECT * code FROM ${tablename}`, [], (e, row) => {
+      cashDb.all(`SELECT * FROM ${tablename}`, [], (e, row) => {
         if (e) { reject(e); }
         return resolve(row);
       });
