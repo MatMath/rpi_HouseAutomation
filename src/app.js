@@ -53,7 +53,7 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 // On movement
 myEmitter.on('movement', async () => {
   // Open light
-  debug('Movement detected');
+  debug('Movement detected', new Date());
   addErrorCode('Movement detected', 'NA', 'INFO');
   startProcessorFan(); // Processor will do OpenCV so it will need to cool down.
   setTimeout(stopProcessorFan, 30000);
@@ -85,7 +85,12 @@ myEmitter.on('movement', async () => {
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.get('/openlight', (req, res) => { openLight(); res.json(true); });
-app.get('/getDoorMovement', (req, res) => { getDoorMovement().then(logs => res.json(logs)); });
+app.get('/getDoorMovement', (req, res) => {
+  getDoorMovement().then(logs => res.json(logs.map(item => ({
+    timestamp: item.doormovement,
+    humanReadable: new Date(item.doormovement),
+  }))));
+});
 app.get('/motor/open/:id', (req) => {
   const id = parseInt(req.params.id, 10);
   openBlindSequence(config.blindMotorControl[id]);
