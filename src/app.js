@@ -85,14 +85,13 @@ myEmitter.on('movement', async () => {
 // Upload all img on the server / Dropbox / G.Drive / S3.
 
 // Clean all file older than X day for space. (32G locally).
-
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.use('/actions', userControls);
 app.get('/getDoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
-    timestamp: item.doormovement,
-    humanReadable: new Date(item.doormovement),
+    timestamp: item.evenementAt,
+    humanReadable: new Date(item.evenementAt),
   }))));
 });
 app.get('/', (req, res) => {
