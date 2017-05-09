@@ -4,6 +4,7 @@ const express = require('express');
 const helmet = require('helmet');
 const path = require('path');
 const EventEmitter = require('events');
+const auth = require('basic-auth')
 
 const app = express();
 app.use(helmet());
@@ -19,6 +20,7 @@ const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioAct
 const { addErrorCode, getDoorMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 const userControls = require('./userControls');
+const { credentials } = require('../simpleAuth.json');
 
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
@@ -84,10 +86,22 @@ myEmitter.on('movement', async () => {
 
 // Upload all img on the server / Dropbox / G.Drive / S3.
 
+const checkPermission = (req, res, next) => {
+  const userInput = auth(req);
+  if (!userInput || !credentials[userInput.name] || userInput.pass !== credentials[userInput.name]) {
+    res.statusCode = 401;
+    res.setHeader('WWW-Authenticate', 'Basic realm="example"');
+    res.end('Access denied');
+  } else {
+    next();
+  }
+};
+
+
 // Clean all file older than X day for space. (32G locally).
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
-app.use('/actions', userControls);
+app.use('/actions', checkPermission, userControls);
 app.get('/getDoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
     timestamp: item.evenementAt,

@@ -2,6 +2,7 @@ node_modules/
 outputData/
 rootkey.csv
 .aws_credential.txt
+simpleAuth.json
 
 # OS generated files #
 ######################
