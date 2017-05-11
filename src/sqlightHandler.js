@@ -20,6 +20,7 @@ const generateDBAndTable = fullPath => new Promise((resolve, reject) => {
     // cashDb.on('error', (err)=>{ debug('ERROR in cashDb ', err); }); Cannot be use since it will be active no matter where it fail. (dosent have closure)
   cashDb.serialize(() => {
     cashDb.run('CREATE TABLE doormovement (evenementAt DATE)');
+    cashDb.run('CREATE TABLE frontmovement (evenementAt DATE)');
     cashDb.run('CREATE TABLE errorlogs (message TEXT, code TEXT, severity TEXT, event_date DATE)', [], (e) => {
       debug('resolving the LAST function called', e);
       if (e) { reject(e); }
@@ -84,9 +85,26 @@ const getDoorMovement = () => {
   });
 };
 
+const frontMovement = () => {
+  const cashDb = buildOrGetDb();
+  cashDb.run('INSERT INTO frontmovement ( evenementAt ) VALUES (?)', [Date.now()]);
+};
+
+const getFrontMovement = () => {
+  const cashDb = buildOrGetDb();
+  return new Promise((resolve, reject) => {
+    cashDb.all('SELECT * FROM frontmovement', [], (e, row) => {
+      if (e) { reject(e); }
+      return resolve(row);
+    });
+  });
+};
+
 module.exports.generateDBAndTable = generateDBAndTable;
 
 module.exports.addErrorCode = addErrorCode;
 module.exports.getAllErrLogs = getAllErrLogs;
 module.exports.doorMovement = doorMovement;
 module.exports.getDoorMovement = getDoorMovement;
+module.exports.frontMovement = frontMovement;
+module.exports.getFrontMovement = getFrontMovement;

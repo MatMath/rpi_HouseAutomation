@@ -83,26 +83,29 @@ const validateMotorActions = (obj) => {
   });
 };
 
-const monitorFront = () => {
+const monitorFront = (event) => {
   // currently it does nothing.
   setInterval(() => {
     read1Pin(config.doorMovementDetectionPin)
     .then((value) => {
       if (value === 1) {
-        movementFront = Date.now();
+        if (movementFront < Date.now()) { // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.
+          movementFront = Date.now() + config.lightOpen_ms;
+          event.emit('movementFront');
+        }
       }
     });
   }, 200);
 };
 monitorFront();
 
-const listenToDoor = (event) => {
+const monitorDoor = (event) => {
   // TODO: Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
   setInterval(() => {
     read1Pin(config.doorMovementDetectionPin)
     .then((value) => {
       // adding the front movement detection will block the false alarm (cheep sensor) since the person Absolutely Need to pass on the front door first.
-      if (value === 1 && movementFront > Date.now() - 20000) {
+      if (value === 1 && movementFront > Date.now()) {
         // Opent he light / Start Camera flow
         debug('Door Movement detected');
         if (movementDetected < Date.now() + 2000) { // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.
@@ -136,7 +139,7 @@ const stopProcessorFan = () => {
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
-module.exports.listenToDoor = listenToDoor;
+module.exports.monitorDoor = monitorDoor;
 module.exports.monitorMotorsPins = monitorMotorsPins;
 module.exports.startProcessorFan = startProcessorFan;
 module.exports.stopProcessorFan = stopProcessorFan;

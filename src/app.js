@@ -4,7 +4,7 @@ const express = require('express');
 const helmet = require('helmet');
 const path = require('path');
 const EventEmitter = require('events');
-const auth = require('basic-auth')
+const auth = require('basic-auth');
 
 const app = express();
 app.use(helmet());
@@ -16,8 +16,8 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { listenToDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
-const { addErrorCode, getDoorMovement } = require('./sqlightHandler');
+const { monitorDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
+const { addErrorCode, getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
@@ -25,7 +25,7 @@ const { credentials } = require('../simpleAuth.json');
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
-listenToDoor(myEmitter);
+monitorDoor(myEmitter);
 
 // Handle the Blind Open/close flow
 let blindStatus;
@@ -57,6 +57,11 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 
 
 // On movement
+myEmitter.on('movementFront', () => {
+  // TODO: Trigger a front camera capture later.
+  frontMovement();
+});
+
 myEmitter.on('movement', async () => {
   // Open light
   debug('Movement detected', new Date());
@@ -102,14 +107,20 @@ const checkPermission = (req, res, next) => {
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.use('/actions', checkPermission, userControls);
-app.get('/getDoorMovement', (req, res) => {
+app.get('/DoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
     timestamp: item.evenementAt,
     humanReadable: new Date(item.evenementAt),
   }))));
 });
+app.get('/FrontMovement', (req, res) => {
+  getFrontMovement().then(logs => res.json(logs.map(item => ({
+    timestamp: item.evenementAt,
+    humanReadable: new Date(item.evenementAt),
+  }))));
+});
 app.get('/', (req, res) => {
-  res.json(['/logs', '/logs/delete', '/actions', '/getDoorMovement']);
+  res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
 });
 
 module.exports = app;
