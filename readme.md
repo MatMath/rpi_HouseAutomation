@@ -19,6 +19,9 @@ Make analysis on the file like:
 - OpenCV Face recon
 - Count the number of people passing by per day and match the face if possible (catalog).
 
+## Future / InProgess:
+- Server to save the important data
+- Server interface to show graph of different stats
 
 ## Install on Pi.
 Note: Remember this is an ARM V8 processor on Raspberry PI3-B, so node will install, but not the package to read the pin.
