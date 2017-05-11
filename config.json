@@ -2,6 +2,8 @@
   "openMorningAt": 7,
   "closeEveningAt": 19,
   "doorMovementDetectionPin": 17,
+  "frontMovementDetectionPin": 18,
+  "aliveLight": 20,
   "lightOpenSSR": 21,
   "lightOpen_ms": 30000,
   "blindMotorControl": [

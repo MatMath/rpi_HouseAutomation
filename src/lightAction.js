@@ -23,5 +23,14 @@ const openLight = () => {
   }, config.lightOpen_ms);
 };
 
+function activityLight() {
+  // For some strange reason sometime the process Stop and that is even if forever is on top of it. :|
+  // So having a blinking light might be fun to see if ti still run.
+  const OnOffDelay = 2000;
+  setInterval(() => write1Pin(config.aliveLight, 1), OnOffDelay);
+  setTimeout(() => setInterval(() => write1Pin(config.aliveLight, 0), OnOffDelay), OnOffDelay / 2);
+}
+
+activityLight();
 
 module.exports.openLight = openLight;

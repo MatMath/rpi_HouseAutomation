@@ -8,6 +8,7 @@ const { addErrorCode } = require('./sqlightHandler');
 
 const mode = process.env.mode;
 let movementDetected = 0;
+let movementFront = 0;
 
 const loadtimeSetup = (nbr, inOut) => {
   if (mode !== 'production') { return; } // Not on the Pi.
@@ -22,6 +23,8 @@ const loadtimeSetup = (nbr, inOut) => {
 // Some pins need to be setup at load time for Out and In and the default value.
 function init() {
   loadtimeSetup(config.doorMovementDetectionPin, 'in');
+  loadtimeSetup(config.frontMovementDetectionPin, 'in');
+  loadtimeSetup(config.aliveLight, 'out');
   loadtimeSetup(config.lightOpenSSR, 'out');
   loadtimeSetup(config.processorFanPin, 'out');
   for (let i = 0; i < config.blindMotorControl.length; i++) {
@@ -80,12 +83,26 @@ const validateMotorActions = (obj) => {
   });
 };
 
+const monitorFront = () => {
+  // currently it does nothing.
+  setInterval(() => {
+    read1Pin(config.doorMovementDetectionPin)
+    .then((value) => {
+      if (value === 1) {
+        movementFront = Date.now();
+      }
+    });
+  }, 200);
+};
+monitorFront();
+
 const listenToDoor = (event) => {
   // TODO: Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
   setInterval(() => {
     read1Pin(config.doorMovementDetectionPin)
     .then((value) => {
-      if (value === 1) {
+      // adding the front movement detection will block the false alarm (cheep sensor) since the person Absolutely Need to pass on the front door first.
+      if (value === 1 && movementFront > Date.now() - 20000) {
         // Opent he light / Start Camera flow
         debug('Door Movement detected');
         if (movementDetected < Date.now() + 2000) { // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.

@@ -7,8 +7,9 @@ In the morning (light), Open the blind.
   - On a Schedule (easy to start)
   - On manual trigger later (via API)
 
-Camera: (using movement detector to trigger)
-On movement take a picture/Record a video
+Front of the house : (using movement detector to trigger)
+On movement in the front take a picture/Record a video
+
 Door Camera + Led lighting:
 On Movement next to the door Take a picture/Video & Open the Led light / (Text picture ?).
 
