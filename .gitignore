@@ -1,5 +1,6 @@
 node_modules/
 outputData/
+src/db/*
 rootkey.csv
 .aws_credential.txt
 simpleAuth.json

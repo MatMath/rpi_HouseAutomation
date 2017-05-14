@@ -84,19 +84,22 @@ const validateMotorActions = (obj) => {
   });
 };
 
-const monitorFront = (event) => {
+const waitMs = x => new Promise((resolve) => { setTimeout(resolve, x); });
+
+const monitorFront = async (event) => {
   // currently it does nothing.
-  setInterval(() => {
-    read1Pin(config.frontMovementDetectionPin)
-    .then((value) => {
-      if (value === 1) {
-        if (movementFront < Date.now()) { // Buffer so we dont call every second.
-          movementFront = Date.now() + config.frontMovementBuffer;
-          event.emit('movementFront');
-        }
-      }
-    });
-  }, 200);
+  await waitMs(200);
+  const value = await read1Pin(config.frontMovementDetectionPin);
+  if (value === 1) {
+    // Do a test to see if it is a car passing/False alarm
+    await waitMs(config.falseAlarmBuffer);
+    const valid = await read1Pin(config.frontMovementDetectionPin);
+    if (valid === 1 && movementFront < Date.now()) { // Buffer so we dont call every second.
+      movementFront = Date.now() + config.frontMovementBuffer;
+      event.emit('movementFront');
+    }
+  }
+  return monitorFront(event);
 };
 
 const monitorDoor = (event) => {

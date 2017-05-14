@@ -1,12 +1,13 @@
 {
   "openMorningAt": 7,
   "closeEveningAt": 19,
-  "doorMovementDetectionPin": 17,
-  "frontMovementDetectionPin": 26,
+  "doorMovementDetectionPin": 23,
+  "frontMovementDetectionPin": 24,
   "aliveLight": 12,
   "lightOpenSSR": 21,
   "lightOpen_ms": 10000,
   "frontMovementBuffer": 10000,
+  "falseAlarmBuffer": 1000,
   "blindMotorControl": [
     {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5},
     {"motorOpen":4, "motorClose":3, "openLimitSwitch": 6, "closeLimitSwitch": 5}
