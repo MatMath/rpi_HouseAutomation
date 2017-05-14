@@ -6,12 +6,12 @@ const { exec, execSync } = require('child_process');
 const config = require('../config.json');
 const { addErrorCode } = require('./sqlightHandler');
 
-const mode = process.env.mode;
+const platform = process.platform; // Currently working building on a Mac so this works for me. You can always use a Env Var instead.
 let movementDetected = 0;
 let movementFront = 0;
 
 const loadtimeSetup = (nbr, inOut) => {
-  if (mode !== 'production') { return; } // Not on the Pi.
+  if (platform !== 'linux') { return; } // Not on the Pi.
   try {
     execSync(`gpio export ${nbr} ${inOut}`);
     if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
@@ -38,7 +38,7 @@ function init() {
 init();
 
 const read1Pin = (nbr) => {
-  if (mode !== 'production') { return Promise.resolve(0); } // Not on the Pi.
+  if (platform !== 'linux') { return Promise.resolve(0); } // Not on the Pi.
   debug(`Read Pin ${nbr}`);
   return new Promise((resolve, reject) => {
     exec(`gpio -g read ${nbr}`, (error, stdout, stderr) => {
@@ -52,7 +52,7 @@ const read1Pin = (nbr) => {
 };
 
 const write1Pin = (nbr, value) => {
-  if (mode !== 'production') { return Promise.resolve(0); } // Not on the Pi.
+  if (platform !== 'linux') { return Promise.resolve(0); } // Not on the Pi.
   debug(`Write Pin ${nbr} at ${value}`);
   return new Promise((resolve, reject) => {
     exec(`gpio -g write ${nbr} ${value}`, (error, stdout, stderr) => {

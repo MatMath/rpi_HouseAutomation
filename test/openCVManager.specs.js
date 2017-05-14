@@ -9,7 +9,9 @@ describe('Testing the Flow with OpenCV', function nameMe() {
   const currentImg = path.join(__dirname, '../sampleData/GreatDay.jpg');
   const resizeDestination = path.join(__dirname, '../outputData/GreatDay.jpg');
   const synchDestination = path.join(__dirname, './sync/GreatDay.jpg');
-  fs.mkdirSync(path.join(__dirname, './sync/'));
+  if (!fs.existsSync(path.join(__dirname, './sync/'))) {
+    fs.mkdirSync(path.join(__dirname, './sync/'));
+  }
 
   after(() => {
     fs.unlinkSync(resizeDestination);
