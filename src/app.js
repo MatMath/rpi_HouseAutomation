@@ -62,12 +62,13 @@ scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 // On movement
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
+  debug('Front Movement detected', new Date());
   frontMovement();
 });
 
 myEmitter.on('movement', async () => {
   // Open light
-  debug('Movement detected', new Date());
+  debug('Door Movement detected', new Date());
   addErrorCode('Movement detected', 'NA', 'INFO');
   startProcessorFan(); // Processor will do OpenCV so it will need to cool down.
   setTimeout(stopProcessorFan, 30000);

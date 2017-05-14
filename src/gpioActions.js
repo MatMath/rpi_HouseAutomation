@@ -13,6 +13,7 @@ let movementFront = 0;
 const loadtimeSetup = (nbr, inOut) => {
   if (platform !== 'linux') { return; } // Not on the Pi.
   try {
+    console.log(`Set Pin # ${nbr} at ${inOut}`);
     execSync(`gpio export ${nbr} ${inOut}`);
     if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
   } catch (e) {
@@ -86,7 +87,7 @@ const validateMotorActions = (obj) => {
 const monitorFront = (event) => {
   // currently it does nothing.
   setInterval(() => {
-    read1Pin(config.doorMovementDetectionPin)
+    read1Pin(config.frontMovementDetectionPin)
     .then((value) => {
       if (value === 1) {
         if (movementFront < Date.now()) { // Buffer so we dont call every second.
