@@ -16,7 +16,7 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { monitorDoor, startProcessorFan, stopProcessorFan } = require('./gpioActions');
+const { monitorDoor, monitorFront, startProcessorFan, stopProcessorFan } = require('./gpioActions');
 const { addErrorCode, getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 const userControls = require('./userControls');
@@ -26,6 +26,7 @@ class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
 monitorDoor(myEmitter);
+monitorFront(myEmitter);
 
 // Handle the Blind Open/close flow
 let blindStatus;

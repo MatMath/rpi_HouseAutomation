@@ -89,15 +89,14 @@ const monitorFront = (event) => {
     read1Pin(config.doorMovementDetectionPin)
     .then((value) => {
       if (value === 1) {
-        if (movementFront < Date.now()) { // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.
-          movementFront = Date.now() + config.lightOpen_ms;
+        if (movementFront < Date.now()) { // Buffer so we dont call every second.
+          movementFront = Date.now() + config.frontMovementBuffer;
           event.emit('movementFront');
         }
       }
     });
   }, 200);
 };
-monitorFront();
 
 const monitorDoor = (event) => {
   // TODO: Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
@@ -127,6 +126,7 @@ const monitorMotorsPins = () => {
 
 const startProcessorFan = () => {
   // This could be a move to the app section, but in case we have a more complex Start-Stop fan setup we have the flexibility.
+  // Note: The GPIO cannot run the fan, this open a Transistor (3.3v) and the transistor power the fan (5v).
   write1Pin(config.processorFanPin, 1);
 };
 
@@ -135,10 +135,10 @@ const stopProcessorFan = () => {
 };
 
 // TODO: Put motor on a Promise.All with a timeout that close everything.
-// Movement detector should be monitored better.
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
+module.exports.monitorFront = monitorFront;
 module.exports.monitorDoor = monitorDoor;
 module.exports.monitorMotorsPins = monitorMotorsPins;
 module.exports.startProcessorFan = startProcessorFan;
