@@ -34,15 +34,13 @@ const cleanDisk = () => {
   });
 };
 
-const shouldWeClean = () => {
+const shouldWeCleanDisk = () => {
   // Here put your logic for the space management.
   if (checkDiskUnix().available < diskUtility.minMbSpace) {
     debug('Cleaning the Disk is trigger.');
     cleanDisk();
   }
 };
-cleanDisk();
-
 
 module.exports.checkDiskUnix = checkDiskUnix;
-module.exports.shouldWeClean = shouldWeClean;
+module.exports.shouldWeCleanDisk = shouldWeCleanDisk;
