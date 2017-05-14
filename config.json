@@ -13,5 +13,9 @@
   ],
   "processorFanPin": 22,
   "note": "The Processor Fan is because I want to control a FAN to cool the processor, but only when the PI is doing real work like OpenCV and not all the time.",
-  "possiblePinout": "2 to 27 out of 40 pins"
+  "possiblePinout": "2 to 27 out of 40 pins",
+  "diskUtility": {
+    "saveImgPath": "video",
+    "minMbSpace": 2000
+  }
 }
