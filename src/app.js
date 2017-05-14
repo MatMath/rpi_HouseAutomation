@@ -55,8 +55,8 @@ myEmitter.on('closeBlind', () => {
   }
 });
 
-scheduler(`* ${config.openMorningAt} * * *`, myEmitter, 'openBlind');
-scheduler(`* ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
+scheduler(`0 ${config.openMorningAt} * * *`, myEmitter, 'openBlind');
+scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 
 
 // On movement

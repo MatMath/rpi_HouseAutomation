@@ -100,17 +100,21 @@ const monitorFront = (event) => {
 };
 
 const monitorDoor = (event) => {
-  // TODO: Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
+  // TODO: Issue #4 Should be in a Event Detector instead but I cannot make pi-gpio or rpi-gpio work.
   setInterval(() => {
     read1Pin(config.doorMovementDetectionPin)
     .then((value) => {
-      // adding the front movement detection will block the false alarm (cheep sensor) since the person Absolutely Need to pass on the front door first.
-      if (value === 1 && movementFront > Date.now()) {
-        // Opent he light / Start Camera flow
-        debug('Door Movement detected');
-        if (movementDetected < Date.now() + 2000) { // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.
+      // Buffer so we dont call every second, and so the lignt Off dosent trigger the sensor.
+      if (value === 1 && movementDetected < Date.now() + 2000) {
+        // adding the front movement detection will block the false alarm (cheep sensor) since the person Absolutely Need to pass on the front door first.
+        if (movementFront > Date.now()) {
+          debug('Door Movement detected');
+          // Opent he light / Start Camera flow
           movementDetected = Date.now() + config.lightOpen_ms;
           event.emit('movement');
+        } else {
+          // False alarm at the door.  Count to monitor the State of the sensor/make adjustment.
+          debug('False Movement detected');
         }
       }
     });
