@@ -2,11 +2,11 @@
 // Ressources: http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html
 const { exec } = require('child_process');
 const { addErrorCode } = require('./sqlightHandler');
-
+// Current camera 12 img in 10 sec.
 const captureImg = async (initialDate) => {
   const initDate = (initialDate) ? initialDate : Date.now();
   const now = Date.now();
-  if (now < initDate + 20000) { return; }
+  if (now > initDate + 8000) { return; }
   await addErrorCode('Img Capture', 'Capture', 'INFO');
   try {
     await exec(`sudo fswebcam -r 1280x720 --no-banner video/${now}.jpg`);
@@ -15,7 +15,7 @@ const captureImg = async (initialDate) => {
     addErrorCode('Capture Failed', e, 'INFO');
     console.log(e);
   }
-  return captureImg(initialDate);
+  return captureImg(initDate);
 };
 
 module.exports.captureImg = captureImg;
