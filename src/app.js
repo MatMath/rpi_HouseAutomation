@@ -22,6 +22,7 @@ const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
 const { shouldWeCleanDisk } = require('./diskUtility');
+const { captureImg } = require('./captureImage');
 
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
@@ -63,6 +64,7 @@ scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
   debug('Front Movement detected', new Date());
+  captureImg(Date.now());
   frontMovement();
 });
 

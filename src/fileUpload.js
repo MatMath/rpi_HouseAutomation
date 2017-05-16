@@ -5,7 +5,7 @@ const { addErrorCode } = require('./sqlightHandler');
 
 const syncFolder = () => {
   addErrorCode('AWS Upload', 'Upload', 'INFO');
-  exec('aws s3  sync  ./sampleData/  s3://backupforpi/sampleData/', (err, stdout, stderr) => {
+  exec('aws s3  sync  ./video/  s3://backupforpi/video/', (err, stdout, stderr) => {
     if (err || stderr) { console.error(err, stderr); }
     addErrorCode('AWS Fail', stdout, 'INFO');
     console.log(stdout);
