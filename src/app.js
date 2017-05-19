@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const path = require('path');
 const EventEmitter = require('events');
 const auth = require('basic-auth');
+const awesomeLogger = require('express-bunyan-logger');
 
 const app = express();
 app.use(helmet());
@@ -110,6 +111,13 @@ const checkPermission = (req, res, next) => {
 
 
 // Clean all file older than X day for space. (32G locally).
+app.use(awesomeLogger({
+  name: 'logger',
+  streams: [{
+    level: 'warn',
+    stream: process.stdout,
+  }],
+}));
 app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
 app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.use('/actions', checkPermission, userControls);

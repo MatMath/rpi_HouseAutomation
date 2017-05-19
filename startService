@@ -1,0 +1,8 @@
+#!/bin/bash
+
+forever \
+start \
+-al $LOGDIR/logs/rpi.log \
+-ao $LOGDIR/logs/rpiout.log \
+-ae $LOGDIR/logs/rpierr.log \
+./bin/www

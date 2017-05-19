@@ -35,6 +35,8 @@ From a fresh install of Pi I was able to make it run with:
 - Git clone / npm install
 - Copy simpleAuth.sample.json to simpleAuth.json
 
+- To make it run on ssh: $ nohup node bin/www &
+
 ## Problem:
 At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error
 
