@@ -6,6 +6,8 @@ const { diskUtility } = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
+const waitms = async x => new Promise((resolve) => { setTimeout(resolve, x); });
+
 // Current camera 12 img in 10 sec.
 const captureImg = async (initialDate) => {
   let initDate = (initialDate === undefined) ? Date.now() : initialDate;
@@ -17,12 +19,13 @@ const captureImg = async (initialDate) => {
   if (now > initDate + 8000) { return true; }
 
   try {
-    execSync(`sudo fswebcam -r 1280x720 --no-banner video/${initialDate}/${now}.jpg`); // this will return even if the img is not saved.
+    execSync(`sudo fswebcam -v -r 1280x720 --no-banner video/${initialDate}/${now}.jpg`); // this will return even if the img is not saved.
     await addErrorCode('Img Capture', 'Capture', 'INFO');
   } catch (e) {
     if (e) { console.error('AMC', e); }
     await addErrorCode('Img Capture', 'Failed', 'WARNING');
   }
+  await waitms(200);
   return captureImg(initDate);
 };
 

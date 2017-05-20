@@ -133,6 +133,7 @@ app.get('/FrontMovement', (req, res) => {
     humanReadable: new Date(item.evenementAt),
   }))));
 });
+app.use('/video', express.static('video'))
 app.get('/', (req, res) => {
   res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
 });
