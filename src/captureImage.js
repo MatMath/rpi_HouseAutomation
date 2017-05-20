@@ -2,15 +2,16 @@
 // Ressources: http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html
 const { execSync } = require('child_process');
 const { addErrorCode } = require('./sqlightHandler');
+const { diskUtility } = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
 // Current camera 12 img in 10 sec.
 const captureImg = async (initialDate) => {
-  let initDate = initialDate;
-  if (initialDate === undefined) {
-    initDate = Date.now();
-    fs.mkdirSync(path.join(__dirname, initDate)); // First occurence
+  let initDate = (initialDate === undefined) ? Date.now() : initialDate;
+  const fullpath = `${diskUtility.saveImgPath}/${initDate}`;
+  if (!fs.existsSync(fullpath)) {
+    fs.mkdirSync(fullpath); // First occurence
   }
   const now = Date.now();
   if (now > initDate + 8000) { return true; }

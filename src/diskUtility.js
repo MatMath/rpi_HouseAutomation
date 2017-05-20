@@ -5,7 +5,7 @@ const path = require('path');
 
 const { diskUtility } = require('../config.json');
 
-const videoFolder = path.join(__dirname, '../', diskUtility.saveImgPath);
+const videoFolder = diskUtility.saveImgPath;
 if (!fs.existsSync(videoFolder)) { fs.mkdirSync(videoFolder); }
 
 const checkDiskUnix = () => {

@@ -16,7 +16,7 @@
   "note": "The Processor Fan is because I want to control a FAN to cool the processor, but only when the PI is doing real work like OpenCV and not all the time.",
   "possiblePinout": "2 to 27 out of 40 pins",
   "diskUtility": {
-    "saveImgPath": "video",
+    "saveImgPath": "/home/mathieu/rpi_HouseAutomation/video",
     "minMbSpace": 10000,
     "minDelayBetweenCheck": 20
   }
