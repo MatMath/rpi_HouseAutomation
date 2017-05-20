@@ -10,7 +10,7 @@ const captureImg = async (initialDate) => {
   let initDate = initialDate;
   if (initialDate === undefined) {
     initDate = Date.now();
-    fs.mkdir(path.join(__dirname, initialDate)); // First occurence
+    fs.mkdirSync(path.join(__dirname, initDate)); // First occurence
   }
   const now = Date.now();
   if (now > initDate + 8000) { return true; }
