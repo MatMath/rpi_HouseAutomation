@@ -17,7 +17,7 @@
   "possiblePinout": "2 to 27 out of 40 pins",
   "diskUtility": {
     "saveImgPath": "video",
-    "minMbSpace": 2000,
-    "minDelayBetweenCheck": 120
+    "minMbSpace": 10000,
+    "minDelayBetweenCheck": 20
   }
 }
