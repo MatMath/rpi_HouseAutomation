@@ -17,13 +17,14 @@ const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { monitorDoor, monitorFront, startProcessorFan, stopProcessorFan } = require('./gpioActions');
+const { monitorDoor, monitorFront } = require('./gpioActions');
 const { addErrorCode, getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
 const { shouldWeCleanDisk } = require('./diskUtility');
 const { captureImg } = require('./captureImage');
+require('./fanControl');
 
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
@@ -73,8 +74,6 @@ myEmitter.on('movement', async () => {
   // Open light
   debug('Door Movement detected', new Date());
   addErrorCode('Movement detected', 'NA', 'INFO');
-  startProcessorFan(); // Processor will do OpenCV so it will need to cool down.
-  setTimeout(stopProcessorFan, 30000);
   openLight();
   // Capture a image. --> ffmpg??
   // Save a image on disk
@@ -85,9 +84,6 @@ myEmitter.on('movement', async () => {
   // Do img Validation on it
   // resizeAndValidateImg(imgPath); // This will run on each image that get in in paralle.
 });
-
-// Handle the Image Capture flow On Mac (testing) and (Linux real).
-// FFMPG ? Or ??
 
 // Save img/Stream on disk
 

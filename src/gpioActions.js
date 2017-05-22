@@ -132,16 +132,6 @@ const monitorMotorsPins = () => {
   }, 1000);
 };
 
-const startProcessorFan = () => {
-  // This could be a move to the app section, but in case we have a more complex Start-Stop fan setup we have the flexibility.
-  // Note: The GPIO cannot run the fan, this open a Transistor (3.3v) and the transistor power the fan (5v).
-  write1Pin(config.processorFanPin, 1);
-};
-
-const stopProcessorFan = () => {
-  write1Pin(config.processorFanPin, 0);
-};
-
 // TODO: Put motor on a Promise.All with a timeout that close everything.
 
 module.exports.read1Pin = read1Pin;
@@ -149,5 +139,3 @@ module.exports.write1Pin = write1Pin;
 module.exports.monitorFront = monitorFront;
 module.exports.monitorDoor = monitorDoor;
 module.exports.monitorMotorsPins = monitorMotorsPins;
-module.exports.startProcessorFan = startProcessorFan;
-module.exports.stopProcessorFan = stopProcessorFan;
