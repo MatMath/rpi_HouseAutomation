@@ -26,22 +26,20 @@ Make analysis on the file like:
 
 ## Install on Pi.
 Note: Remember this is an ARM V8 processor on Raspberry PI3-B, so node will install, but not the package to read the pin.
-I tried Raspian, Ubuntu Core snap, and Ubuntu 16.04 and all had the same problem on all of them when using a npm package for the GPIO (pi-gpui or rpi-gpio), (node is easy to install but using rpi-GIPO you need SUDO and node as sudo is bad.)
 From a fresh install of Pi I was able to make it run with:
-- 16.04 pre-installed Ubuntu from https://wiki.ubuntu.com/ARM/RaspberryPi
 - apt-get update
 - apt-get upgrade
 - install node with what you like "nvm" or "n"
 - Git clone / npm install
 - Copy simpleAuth.sample.json to simpleAuth.json
-
+- Install & setup Motion: https://motion-project.github.io/ with the right output directory.
+- Setup/Configure AWS CLI with sudo (http://docs.aws.amazon.com/cli/latest/userguide/installing.html).
 - To make it run on ssh: $ nohup node bin/www &
 
 ## Problem:
-At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error
+With Ubuntu 16.04 At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error. But now I use Raspian.
 
-## GPIO Problems:
-I tried hard to make rpi-gpio or pi-gpio work and no success. I was able to read but not to write even in sudo so after a while I gave up and switch tactics (almost switch to python :| ).
+## GPIO:
 I will use the Command line with:
 - git clone git://git.drogon.net/wiringPi
 - cd wiringPi
@@ -49,3 +47,15 @@ I will use the Command line with:
 And using it with: gpio -v, gpio readall, gpio -g mode 2 out, gpio -g write 2 1   (see more at http://wiringpi.com/the-gpio-utility/)
 Benefit: I don't have to use sudo anymore.
 Problem: I don't have an event emitter I have to loop check.
+
+## Setup of Motion:
+Change the Path of the output to be the same as the AWS sync folder.
+Setup to only capture video of a few sec.
+Changed the Width-Height of the img capture.
+framerate: 5
+minimum_motion_frames: 3
+
+## Design History:
+Initial design was to use pi-gpui or rpi-gpio to control the GPIO pins, but that was harder than expected since it failed to work and also need SUDO to run and that is bad practice to run Node as sudo. So I ended-up using wiringPi as childProcess.
+Trying to use "fswebcam" to capture the frame, but I needed to discard the first few frames so the camera adjust the brightness. So a lot of time waisted between frames.
+So I decided to use "Motion" https://motion-project.github.io/ and it was way simpler to setup and use. (so now I dont need my motion sensor anymore, except for the door).
