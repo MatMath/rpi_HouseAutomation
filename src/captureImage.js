@@ -1,3 +1,5 @@
+// This code is there if we want to switch back to a manual flow, But, now "Motion" took control of that part.
+
 // This will be the case with AWS S3. But you can add your own if you prefer Dropbox or any other soft. Or skip it completely if you put into the Dropbox/Gdrive folder directly.
 // Ressources: http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html
 const { execSync } = require('child_process');
@@ -19,7 +21,7 @@ const captureImg = async (initialDate) => {
   if (now > initDate + 8000) { return true; }
 
   try {
-    execSync(`sudo fswebcam -v -r 1280x720 --no-banner video/${initialDate}/${now}.jpg`); // this will return even if the img is not saved.
+    execSync(`sudo fswebcam -r 1280x720 -S 10 --no-banner video/${initialDate}/${now}.jpg`); // this will return even if the img is not saved.
     await addErrorCode('Img Capture', 'Capture', 'INFO');
   } catch (e) {
     if (e) { console.error('AMC', e); }

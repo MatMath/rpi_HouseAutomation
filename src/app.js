@@ -23,7 +23,6 @@ const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
 const { shouldWeCleanDisk } = require('./diskUtility');
-const { captureImg } = require('./captureImage');
 require('./fanControl');
 
 class MyEmitter extends EventEmitter {}
@@ -66,7 +65,6 @@ scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
   debug('Front Movement detected', new Date());
-  captureImg(Date.now());
   frontMovement();
 });
 
@@ -75,8 +73,7 @@ myEmitter.on('movement', async () => {
   debug('Door Movement detected', new Date());
   addErrorCode('Movement detected', 'NA', 'INFO');
   openLight();
-  // Capture a image. --> ffmpg??
-  // Save a image on disk
+
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
   syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
   const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
