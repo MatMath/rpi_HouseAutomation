@@ -17,18 +17,22 @@ const checkDiskUnix = () => {
   });
 };
 
+// input 2017-04-23-21-53-18
+const fileNameToTimestamp = (name) => {
+  const dateSplit = name.split('-').map(item => parseInt(item, 10));
+  dateSplit[1] -= 1; // substract 1 month. 0 to 11.
+  return new Date(...dateSplit).getTime();
+};
+
 const cleanDisk = () => {
   // List and delete folder/data.
   // buffer = 1 day
   const buffer = 1 * 24 * 60 * 60 * 1000;
   fs.readdirSync(videoFolder).map((name) => {
-    if (parseInt(name, 10) < Date.now() - buffer) {
-      const subFolder = path.join(videoFolder, name);
-      debug(`removing all file in folder ${subFolder}`);
-      fs.readdirSync(subFolder).map(file => fs.unlinkSync(path.join(subFolder, file)));
-      debug(`Removing folder ${name}`);
-      fs.rmdirSync(path.join(videoFolder, name));
-      return name;
+    const filetmstamp = fileNameToTimestamp(name);
+    if (filetmstamp < Date.now() - buffer) {
+      fs.unlinkSync(path.join(videoFolder, name));
+      debug(`Removing file ${name}`);
     }
     return '';
   });
@@ -44,3 +48,4 @@ const shouldWeCleanDisk = () => {
 
 module.exports.checkDiskUnix = checkDiskUnix;
 module.exports.shouldWeCleanDisk = shouldWeCleanDisk;
+module.exports.cleanDisk = cleanDisk;
