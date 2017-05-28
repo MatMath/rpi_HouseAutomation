@@ -8,15 +8,6 @@ const { diskUtility } = require('../config.json');
 const videoFolder = diskUtility.saveImgPath;
 if (!fs.existsSync(videoFolder)) { fs.mkdirSync(videoFolder); }
 
-const checkDiskUnix = () => {
-  const info = disk.checkSync('/');
-  return ({
-    available: parseInt(info.available / 1024 / 1024, 10),
-    total: parseInt(info.total / 1024 / 1024, 10),
-    ratio: 100 - parseInt(info.available / info.total * 100, 10),
-  });
-};
-
 // input 2017-04-23-21-53-18
 const fileNameToTimestamp = (name) => {
   const dateSplit = name.split('-').map(item => parseInt(item, 10));
@@ -38,14 +29,4 @@ const cleanDisk = () => {
   });
 };
 
-const shouldWeCleanDisk = () => {
-  // Here put your logic for the space management.
-  if (checkDiskUnix().available < diskUtility.minMbSpace) {
-    debug('Cleaning the Disk is trigger.');
-    cleanDisk();
-  }
-};
-
-module.exports.checkDiskUnix = checkDiskUnix;
-module.exports.shouldWeCleanDisk = shouldWeCleanDisk;
 module.exports.cleanDisk = cleanDisk;

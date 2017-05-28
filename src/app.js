@@ -22,7 +22,7 @@ const { addErrorCode, getDoorMovement, frontMovement, getFrontMovement } = requi
 const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
-const { shouldWeCleanDisk } = require('./diskUtility');
+const { cleanDisk } = require('./diskUtility');
 require('./fanControl');
 
 class MyEmitter extends EventEmitter {}
@@ -30,7 +30,7 @@ const myEmitter = new MyEmitter();
 
 monitorDoor(myEmitter);
 monitorFront(myEmitter);
-setInterval(shouldWeCleanDisk, config.diskUtility.minDelayBetweenCheck * 60 * 1000); // Check disk space every X min.
+setInterval(cleanDisk, config.diskUtility.minDelayBetweenCheck * 60 * 1000); // Clean disk space every X min. Better for AWS crawl.
 
 // Handle the Blind Open/close flow
 let blindStatus;
