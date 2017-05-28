@@ -81,6 +81,12 @@ const validateMotorActions = (obj) => {
       debug('Limit reached, Stop motor');
       write1Pin(obj.motorClose, 0);
     } // stop motor
+  })
+  .catch((err) => {
+    // Stop everything!!!
+    console.error('MOTOR Control Error', err);
+    write1Pin(obj.motorClose, 0);
+    write1Pin(obj.motorOpen, 0);
   });
 };
 
@@ -88,16 +94,20 @@ const waitMs = x => new Promise((resolve) => { setTimeout(resolve, x); });
 
 const monitorFront = async (event) => {
   // currently it does nothing.
-  await waitMs(200);
-  const value = await read1Pin(config.frontMovementDetectionPin);
-  if (value === 1) {
-    // Do a test to see if it is a car passing/False alarm
-    await waitMs(config.falseAlarmBuffer);
-    const valid = await read1Pin(config.frontMovementDetectionPin);
-    if (valid === 1 && movementFront < Date.now()) { // Buffer so we dont call every second.
-      movementFront = Date.now() + config.frontMovementBuffer;
-      event.emit('movementFront');
+  try {
+    await waitMs(200);
+    const value = await read1Pin(config.frontMovementDetectionPin);
+    if (value === 1) {
+      // Do a test to see if it is a car passing/False alarm
+      await waitMs(config.falseAlarmBuffer);
+      const valid = await read1Pin(config.frontMovementDetectionPin);
+      if (valid === 1 && movementFront < Date.now()) { // Buffer so we dont call every second.
+        movementFront = Date.now() + config.frontMovementBuffer;
+        event.emit('movementFront');
+      }
     }
+  } catch (e) {
+    console.error('Error in the Monitor Front', e);
   }
   return monitorFront(event);
 };
@@ -120,6 +130,9 @@ const monitorDoor = (event) => {
           debug('False Movement detected');
         }
       }
+    })
+    .catch((err) => {
+      console.error('Err in the Monitor Door', err);
     });
   }, 200);
 };
