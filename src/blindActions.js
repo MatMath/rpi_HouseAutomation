@@ -3,7 +3,6 @@ const { addErrorCode } = require('./sqlightHandler');
 const config = require('../config.json');
 
 const validateMotorActions = async (obj, id) => {
-  console.log('validateMotorActions', obj);
   // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}
   try {
     const OLimit = await gpioActions.read1Pin(obj.openLimitSwitch);
@@ -40,7 +39,7 @@ const monitorMotorsPins = () => {
         gpioActions.write1Pin(obj.motorOpen, 0)
         .then(() => gpioActions.write1Pin(obj.motorClose, 0));
       }
-    }, 1000);
+    }, 500);
   }
 };
 
@@ -71,3 +70,4 @@ const closeBlindSequence = (motorPinoutData) => {
 module.exports.openBlindSequence = openBlindSequence;
 module.exports.closeBlindSequence = closeBlindSequence;
 module.exports.validateMotorActions = validateMotorActions;
+module.exports.monitorMotorsPins = monitorMotorsPins;

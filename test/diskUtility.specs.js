@@ -7,7 +7,6 @@ const { diskUtility } = require('../config.json');
 
 const videoFolder = diskUtility.saveImgPath;
 describe('testing the flow of disk Utility', () => {
-  console.log('Before BOB Prime');
   const listOfFiles = [
     '2017-05-23-21-53-18.avi',
     '2017-05-23-21-56-20.avi',
@@ -21,6 +20,12 @@ describe('testing the flow of disk Utility', () => {
     // Create the list of files to test with.
     listOfFiles.map(file => fs.writeFileSync(path.join(videoFolder, file), ' ')); // just to get a file created.
     fs.writeFileSync(path.join(videoFolder, farfaraway), ' ');
+  });
+
+  after(() => {
+    if (fs.existsSync(path.join(videoFolder, farfaraway))) {
+      fs.unlinkSync(path.join(videoFolder, farfaraway));
+    }
   });
 
   it('Should delete ALL the filed except the last one', () => {
