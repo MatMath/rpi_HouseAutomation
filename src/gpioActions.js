@@ -117,4 +117,3 @@ module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
 module.exports.monitorFront = monitorFront;
 module.exports.monitorDoor = monitorDoor;
-module.exports.monitorMotorsPins = monitorMotorsPins;

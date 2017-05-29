@@ -1,4 +1,4 @@
-const { read1Pin, write1Pin } = require('./gpioActions');
+const gpioActions = require('./gpioActions'); // I need to import the whole module because of Sinon to stub it. :(
 const { addErrorCode } = require('./sqlightHandler');
 const config = require('../config.json');
 
@@ -6,23 +6,23 @@ const validateMotorActions = async (obj, id) => {
   console.log('validateMotorActions', obj);
   // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}
   try {
-    const OLimit = await read1Pin(obj.openLimitSwitch);
+    const OLimit = await gpioActions.read1Pin(obj.openLimitSwitch);
     if (OLimit === 1) {
-      console.log('Limit reached, Stop motor');
-      await write1Pin(obj.motorOpen, 0);
+      console.log('Limit reached, Stop Open motor');
+      await gpioActions.write1Pin(obj.motorOpen, 0);
       clearInterval(id);
     } // Stop Motor
-    const CLimit = await read1Pin(obj.closeLimitSwitch);
+    const CLimit = await gpioActions.read1Pin(obj.closeLimitSwitch);
     if (CLimit === 1) {
-      console.log('Limit reached, Stop motor');
-      write1Pin(obj.motorClose, 0);
+      console.log('Limit reached, Stop Closed motor');
+      gpioActions.write1Pin(obj.motorClose, 0);
       clearInterval(id);
     } // stop motor
   } catch (e) {
     // Stop everything!!!
     console.error('MOTOR Control Error', e);
-    write1Pin(obj.motorClose, 0);
-    write1Pin(obj.motorOpen, 0);
+    gpioActions.write1Pin(obj.motorClose, 0);
+    gpioActions.write1Pin(obj.motorOpen, 0);
     clearInterval(id);
   }
 };
@@ -37,8 +37,8 @@ const monitorMotorsPins = () => {
         // Safety in case the blind sensor do not respond.
         const obj = config.blindMotorControl[i];
         clearInterval(intervalId);
-        write1Pin(obj.motorOpen, 0)
-        .then(() => write1Pin(obj.motorClose, 0));
+        gpioActions.write1Pin(obj.motorOpen, 0)
+        .then(() => gpioActions.write1Pin(obj.motorClose, 0));
       }
     }, 1000);
   }
@@ -46,10 +46,10 @@ const monitorMotorsPins = () => {
 
 const openBlindSequence = (motorPinoutData) => {
   // Check status of the Blind
-  read1Pin(motorPinoutData.openLimitSwitch)
+  gpioActions.read1Pin(motorPinoutData.openLimitSwitch)
   .then((value) => {
     if (value === true) { return false; } // Safety: Blind already Open
-    return write1Pin(motorPinoutData.motorOpen, 1); // Blind not on the Open Limit switch, Open until it click.
+    return gpioActions.write1Pin(motorPinoutData.motorOpen, 1); // Blind not on the Open Limit switch, Open until it click.
   })
   .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At the limit the switch will Turn off
@@ -58,10 +58,10 @@ const openBlindSequence = (motorPinoutData) => {
 
 const closeBlindSequence = (motorPinoutData) => {
   // Check status of the Blind
-  read1Pin(motorPinoutData.openLimitSwitch)
+  gpioActions.read1Pin(motorPinoutData.openLimitSwitch)
   .then((value) => {
     if (value === true) { return false; } // Safety: Blind already Close
-    return write1Pin(motorPinoutData.motorClose, 1); // Blind not on the Close Limit switch, Close until it click.
+    return gpioActions.write1Pin(motorPinoutData.motorClose, 1); // Blind not on the Close Limit switch, Close until it click.
   })
   .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At limit switch Turn off.
@@ -70,3 +70,4 @@ const closeBlindSequence = (motorPinoutData) => {
 
 module.exports.openBlindSequence = openBlindSequence;
 module.exports.closeBlindSequence = closeBlindSequence;
+module.exports.validateMotorActions = validateMotorActions;
