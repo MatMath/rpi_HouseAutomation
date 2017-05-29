@@ -4,8 +4,9 @@ const express = require('express');
 const helmet = require('helmet');
 const awesomeLogger = require('express-bunyan-logger');
 const auth = require('basic-auth');
-const { exec } = require('child_process');
+
 const { credentials } = require('../simpleAuth.json');
+const { getList, deleteItem } = require('./awsFunctions');
 
 const app = express();
 app.use(helmet());
@@ -30,10 +31,40 @@ app.use(awesomeLogger({
   }],
 }));
 
-app.use('/actions', checkPermission, userControls);
-app.get('/listDay/::dayid', (req, res) => {
-  exec("aws s3api list-objects --bucket backupforpi --prefix 'video/2017-05-27' --query 'Contents[].{Key: Key, Size: Size}' --max-items 50").then((list) => {
-    console.log('List received, send it back');
-    res.json(list);
-  });
+// app.use('/actions', checkPermission, userControls);
+app.get('/listday/:dayid/', (req, res) => {
+  const dayid = req.params.dayid;
+  const daySplit = dayid.split('-');
+  // we should have a strict format like "2017-05-01"
+  if (daySplit.length === 3 && daySplit[0].length === 4 && daySplit[1].length === 2 && daySplit[2].length === 2) {
+    getList(dayid)
+    .then(data => res.json(data))
+    .catch(err => res.status(400).send(err));
+  } else {
+    res.status(400).send('Need a Day format like 2017-05-01');
+  }
+});
+
+app.get('/move/:key/:destination/', (req, res) => {
+  const key = req.params.key;
+  const dest = req.params.dest;
+  if (key && dest) {
+    // Possible destination: Delete, Car, Human, Richard (annoying neighbour always in the front)
+    if (dest === 'delete') {
+      deleteItem(key).then(info => res.json(info)).catch(err => res.status(400).send(err));
+    } else if (dest === 'human') {
+      moveItem(key, 'human').then(info => res.json(info)).catch(err => res.status(400).send(err));
+    }
+    res.status(200).send('');
+  }
+  res.status(400).send('Bad format');
+});
+
+app.get('/', (req, res) => {
+  res.json(['/listday/2017-05-26', '/move/::fileID/::destination']);
+});
+
+app.set('port', process.env.API_PORT || 4242);
+const server = app.listen(app.get('port'), () => {
+  console.log(`Express server listening on port ${server.address().port}`);
 });
