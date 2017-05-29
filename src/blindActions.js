@@ -54,11 +54,6 @@ const openBlindSequence = (motorPinoutData) => {
   .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At the limit the switch will Turn off
   monitorMotorsPins();
-
-  // Safety: In case of defect
-  setTimeout(() => {
-    write1Pin(motorPinoutData.motorOpen, 0); // Close the motor after X sec anyway.
-  }, 30 * 1000);
 };
 
 const closeBlindSequence = (motorPinoutData) => {
@@ -71,11 +66,6 @@ const closeBlindSequence = (motorPinoutData) => {
   .catch(err => addErrorCode('Error in the PIN Read', err, 'ERROR'));
   // At limit switch Turn off.
   monitorMotorsPins();
-
-  // Safety: In case of defect
-  setTimeout(() => {
-    write1Pin(motorPinoutData.motorClose, 0); // Close the motor after X sec anyway.
-  }, 30 * 1000);
 };
 
 module.exports.openBlindSequence = openBlindSequence;
