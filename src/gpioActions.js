@@ -66,30 +66,6 @@ const write1Pin = (nbr, value) => {
   });
 };
 
-const validateMotorActions = async (obj, id) => {
-  // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}
-  try {
-    const OLimit = await read1Pin(obj.openLimitSwitch);
-    if (OLimit === 1) {
-      debug('Limit reached, Stop motor');
-      await write1Pin(obj.motorOpen, 0);
-      clearInterval(id);
-    } // Stop Motor
-    const CLimit = await read1Pin(obj.closeLimitSwitch);
-    if (CLimit === 1) {
-      debug('Limit reached, Stop motor');
-      write1Pin(obj.motorClose, 0);
-      clearInterval(id);
-    } // stop motor
-  } catch (e) {
-    // Stop everything!!!
-    console.error('MOTOR Control Error', e);
-    write1Pin(obj.motorClose, 0);
-    write1Pin(obj.motorOpen, 0);
-    clearInterval(id);
-  }
-};
-
 const waitMs = x => new Promise((resolve) => { setTimeout(resolve, x); });
 
 const monitorFront = async (event) => {
@@ -136,16 +112,6 @@ const monitorDoor = (event) => {
     });
   }, 200);
 };
-
-const monitorMotorsPins = () => {
-  for (let i = 0; i < config.blindMotorControl.length; i++) {
-    const intervalId = setInterval(() => {
-      validateMotorActions(config.blindMotorControl[i], intervalId); // TODO Improve this to not write every time but work with a Event Listener.
-    }, 1000);
-  }
-};
-
-// TODO: Put motor on a Promise.All with a timeout that close everything.
 
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;

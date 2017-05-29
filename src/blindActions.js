@@ -1,5 +1,48 @@
-const { read1Pin, write1Pin, monitorMotorsPins } = require('./gpioActions');
+const { read1Pin, write1Pin } = require('./gpioActions');
 const { addErrorCode } = require('./sqlightHandler');
+const config = require('../config.json');
+
+const validateMotorActions = async (obj, id) => {
+  console.log('validateMotorActions', obj);
+  // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}
+  try {
+    const OLimit = await read1Pin(obj.openLimitSwitch);
+    if (OLimit === 1) {
+      console.log('Limit reached, Stop motor');
+      await write1Pin(obj.motorOpen, 0);
+      clearInterval(id);
+    } // Stop Motor
+    const CLimit = await read1Pin(obj.closeLimitSwitch);
+    if (CLimit === 1) {
+      console.log('Limit reached, Stop motor');
+      write1Pin(obj.motorClose, 0);
+      clearInterval(id);
+    } // stop motor
+  } catch (e) {
+    // Stop everything!!!
+    console.error('MOTOR Control Error', e);
+    write1Pin(obj.motorClose, 0);
+    write1Pin(obj.motorOpen, 0);
+    clearInterval(id);
+  }
+};
+
+
+const monitorMotorsPins = () => {
+  const starting = Date.now();
+  for (let i = 0; i < config.blindMotorControl.length; i++) {
+    const intervalId = setInterval(() => {
+      validateMotorActions(config.blindMotorControl[i], intervalId); // TODO Improve this to not write every time but work with a Event Listener.
+      if (starting + 20000 < Date.now()) {
+        // Safety in case the blind sensor do not respond.
+        const obj = config.blindMotorControl[i];
+        clearInterval(intervalId);
+        write1Pin(obj.motorOpen, 0)
+        .then(() => write1Pin(obj.motorClose, 0));
+      }
+    }, 1000);
+  }
+};
 
 const openBlindSequence = (motorPinoutData) => {
   // Check status of the Blind
