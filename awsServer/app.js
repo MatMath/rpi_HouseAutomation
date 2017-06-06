@@ -8,7 +8,7 @@ const auth = require('basic-auth');
 const { credentials } = require('../simpleAuth.json');
 const { getList, deleteItem, moveItem, giveSignedUrl } = require('./awsFunctions');
 
-const possibleFolder = ['human', 'richard', 'car'];
+const possibleFolder = ['human', 'richard', 'car', 'people'];
 
 const app = express();
 app.use(helmet());
@@ -48,7 +48,7 @@ app.get('/listday/:dayid/:subfolder', (req, res) => {
   }
 });
 
-app.get('/move/:key/:destination/', (req, res) => {
+app.get('/move/:key/:dest/', (req, res) => {
   const key = req.params.key;
   const dest = req.params.dest;
   if (key && dest) {
@@ -58,7 +58,6 @@ app.get('/move/:key/:destination/', (req, res) => {
     } else if (possibleFolder.indexOf(dest) > -1) {
       moveItem(key, dest).then(info => res.json(info)).catch(err => res.status(400).send(err));
     }
-    res.status(200).send('');
   } else {
     res.status(400).send('Bad format');
   }
@@ -77,7 +76,7 @@ app.get('/signed/:subfolder/:key', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.json(['/listday/2017-05-26', '/move/::fileID/::destination']);
+  res.json(['/listday/2017-05-26/:subfolder', '/move/:key/:destination', '/signed/:subfolder/:key']);
 });
 
 app.set('port', process.env.API_PORT || 4242);

@@ -31,7 +31,7 @@ const deleteItem = key => new Promise((resolve, reject) => {
 });
 
 const moveItem = (key, dest) => new Promise((resolve, reject) => {
-  exec(`aws s3  mv  s3://backupforpi/video/${key}  s3://backupforpi/${dest}/${key}`, (error, stdout, stderr) => {
+  exec(`aws s3 mv s3://backupforpi/video/${key} s3://backupforpi/${dest}/${key}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return reject(error);
@@ -40,7 +40,7 @@ const moveItem = (key, dest) => new Promise((resolve, reject) => {
       console.error(`exec error: ${stderr}`);
       return reject(stderr);
     }
-    return resolve(JSON.parse(stdout));
+    return resolve(stdout);
   });
 });
 
@@ -55,7 +55,8 @@ const giveSignedUrl = (subfolder, key) => new Promise((resolve, reject) => {
       console.error(`exec error: ${stderr}`);
       return reject(stderr);
     }
-    return resolve(JSON.parse(stdout));
+    // Annoying, the stout give a tring with a /n at the end.
+    return resolve(stdout.slice(0,stdout.lastIndexOf('\n')));
   });
 });
 
