@@ -6,7 +6,9 @@ const awesomeLogger = require('express-bunyan-logger');
 const auth = require('basic-auth');
 
 const { credentials } = require('../simpleAuth.json');
-const { getList, deleteItem } = require('./awsFunctions');
+const { getList, deleteItem, moveItem, giveSignedUrl } = require('./awsFunctions');
+
+const possibleFolder = ['human', 'richard', 'car'];
 
 const app = express();
 app.use(helmet());
@@ -32,12 +34,13 @@ app.use(awesomeLogger({
 }));
 
 // app.use('/actions', checkPermission, userControls);
-app.get('/listday/:dayid/', (req, res) => {
+app.get('/listday/:dayid/:subfolder', (req, res) => {
   const dayid = req.params.dayid;
   const daySplit = dayid.split('-');
+  const subfolder = (possibleFolder.indexOf(req.params.subfolder) > -1) ? req.params.subfolder : 'video';
   // we should have a strict format like "2017-05-01"
   if (daySplit.length === 3 && daySplit[0].length === 4 && daySplit[1].length === 2 && daySplit[2].length === 2) {
-    getList(dayid)
+    getList(dayid, subfolder)
     .then(data => res.json(data))
     .catch(err => res.status(400).send(err));
   } else {
@@ -52,12 +55,25 @@ app.get('/move/:key/:destination/', (req, res) => {
     // Possible destination: Delete, Car, Human, Richard (annoying neighbour always in the front)
     if (dest === 'delete') {
       deleteItem(key).then(info => res.json(info)).catch(err => res.status(400).send(err));
-    } else if (dest === 'human') {
-      moveItem(key, 'human').then(info => res.json(info)).catch(err => res.status(400).send(err));
+    } else if (possibleFolder.indexOf(dest) > -1) {
+      moveItem(key, dest).then(info => res.json(info)).catch(err => res.status(400).send(err));
     }
     res.status(200).send('');
+  } else {
+    res.status(400).send('Bad format');
   }
-  res.status(400).send('Bad format');
+});
+
+// app.use('/actions', checkPermission, userControls);
+app.get('/signed/:subfolder/:key', (req, res) => {
+  const key = req.params.key;
+  const subfolder = (possibleFolder.indexOf(req.params.subfolder) > -1) ? req.params.subfolder : 'video';
+  // we should have a strict format like "2017-05-01"
+  if (key && subfolder) {
+    giveSignedUrl(subfolder, key).then(info => res.json(info)).catch(err => res.status(400).send(err));
+  } else {
+    res.status(400).send('Missing Param');
+  }
 });
 
 app.get('/', (req, res) => {
