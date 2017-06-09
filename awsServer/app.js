@@ -8,7 +8,7 @@ const auth = require('basic-auth');
 const { credentials } = require('../simpleAuth.json');
 const { getList, deleteItem, moveItem, giveSignedUrl } = require('./awsFunctions');
 
-const possibleFolder = ['human', 'richard', 'car', 'people'];
+const possibleFolder = ['richard', 'car', 'people'];
 
 const app = express();
 app.use(helmet());
