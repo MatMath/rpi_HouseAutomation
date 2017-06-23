@@ -12,6 +12,11 @@ const possibleFolder = ['richard', 'car', 'people'];
 
 const app = express();
 app.use(helmet());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 // Way too simple for production but ok for Home fun
 const checkPermission = (req, res, next) => {
@@ -37,7 +42,7 @@ app.use(awesomeLogger({
 app.get('/listday/:dayid/:subfolder', (req, res) => {
   const dayid = req.params.dayid;
   const daySplit = dayid.split('-');
-  const subfolder = (possibleFolder.indexOf(req.params.subfolder) > -1) ? req.params.subfolder : 'video';
+  const subfolder = (possibleFolder.indexOf(req.params.subfolder.toLowerCase()) > -1) ? req.params.subfolder.toLowerCase() : 'video';
   // we should have a strict format like "2017-05-01"
   if (daySplit.length === 3 && daySplit[0].length === 4 && daySplit[1].length === 2 && daySplit[2].length === 2) {
     getList(dayid, subfolder)
@@ -50,12 +55,15 @@ app.get('/listday/:dayid/:subfolder', (req, res) => {
 
 app.get('/move/:key/:dest/', (req, res) => {
   const key = req.params.key;
-  const dest = req.params.dest;
+  const dest = req.params.dest.toLowerCase();
+  console.log('Hitting Move with ', key, dest);
   if (key && dest) {
     // Possible destination: Delete, Car, Human, Richard (annoying neighbour always in the front)
     if (dest === 'delete') {
+      console.log('Deleting it');
       deleteItem(key).then(info => res.json(info)).catch(err => res.status(400).send(err));
     } else if (possibleFolder.indexOf(dest) > -1) {
+      console.log('Moving it!');
       moveItem(key, dest).then(info => res.json(info)).catch(err => res.status(400).send(err));
     }
   } else {
@@ -66,7 +74,7 @@ app.get('/move/:key/:dest/', (req, res) => {
 // app.use('/actions', checkPermission, userControls);
 app.get('/signed/:subfolder/:key', (req, res) => {
   const key = req.params.key;
-  const subfolder = (possibleFolder.indexOf(req.params.subfolder) > -1) ? req.params.subfolder : 'video';
+  const subfolder = (possibleFolder.indexOf(req.params.subfolder.toLowerCase()) > -1) ? req.params.subfolder.toLowerCase() : 'video';
   // we should have a strict format like "2017-05-01"
   if (key && subfolder) {
     giveSignedUrl(subfolder, key).then(info => res.json(info)).catch(err => res.status(400).send(err));
