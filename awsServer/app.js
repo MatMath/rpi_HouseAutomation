@@ -47,7 +47,7 @@ app.get('/listday/:dayid/:subfolder', (req, res) => {
   if (daySplit.length === 3 && daySplit[0].length === 4 && daySplit[1].length === 2 && daySplit[2].length === 2) {
     getList(dayid, subfolder)
     .then(data => res.json(data))
-    .catch(err => res.status(400).send(err));
+    .catch(err => res.status(400).json(err));
   } else {
     res.status(400).send('Need a Day format like 2017-05-01');
   }
@@ -85,6 +85,15 @@ app.get('/signed/:subfolder/:key', (req, res) => {
 
 app.get('/', (req, res) => {
   res.json(['/listday/2017-05-26/:subfolder', '/move/:key/:destination', '/signed/:subfolder/:key']);
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: {},
+    title: 'error',
+  });
 });
 
 app.set('port', process.env.API_PORT || 4242);

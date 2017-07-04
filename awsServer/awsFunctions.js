@@ -3,7 +3,7 @@
 const { exec } = require('child_process');
 
 const getList = (dateParam, subfolder) => new Promise((resolve, reject) => {
-  exec(`aws s3api list-objects --bucket backupforpi --prefix '${subfolder}/${dateParam}' --query 'Contents[].{Key: Key, Size: Size}' --max-items 50`, (error, stdout, stderr) => {
+  exec(`aws s3api list-objects --bucket backupforpi --prefix '${subfolder}/${dateParam}' --query 'Contents[].{key: Key, size: Size}' --max-items 50`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return reject(error);
@@ -12,7 +12,13 @@ const getList = (dateParam, subfolder) => new Promise((resolve, reject) => {
       console.error(`exec error: ${stderr}`);
       return reject(stderr);
     }
-    return resolve(JSON.parse(stdout));
+    let output;
+    try {
+      output = JSON.parse(stdout).filter(item => item.key.indexOf('.mp4') > -1);
+    } catch (e) {
+      reject(e);
+    }
+    return resolve(output);
   });
 });
 
@@ -26,7 +32,7 @@ const deleteItem = key => new Promise((resolve, reject) => {
       console.error(`exec error: ${stderr}`);
       return reject(stderr);
     }
-    return resolve(JSON.parse(stdout));
+    return resolve(stdout);
   });
 });
 
@@ -56,7 +62,7 @@ const giveSignedUrl = (subfolder, key) => new Promise((resolve, reject) => {
       return reject(stderr);
     }
     // Annoying, the stout give a tring with a /n at the end.
-    return resolve(stdout.slice(0,stdout.lastIndexOf('\n')));
+    return resolve(stdout.slice(0, stdout.lastIndexOf('\n')));
   });
 });
 
