@@ -1,6 +1,16 @@
 # House automation
 This will control some motor, light detector, a USB camera to automate the house.
 
+## Short setup checklist from blank SD Card:
+- Download/install Raspian
+- Update upgrade all package.
+- Install latest node with "n" or "nvm"
+- Add key to Github
+- Download repo
+- copy simpleAuth.sample.json simpleAuth.json / Edit it.
+- Install/setup motion
+- "Should work"
+
 ## Flow
 Motors:
 In the morning (light), Open the blind.
@@ -37,9 +47,9 @@ From a fresh install of Pi I was able to make it run with:
 - To make it run on ssh: $ nohup node bin/www &
 
 ## Problem:
-With Ubuntu 16.04 At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error. But now I use Raspian.
+With distro of Ubuntu 16.04 At reboot I had a "U-Boot" loop. Fixed with: https://raspberrypi.stackexchange.com/questions/61342/raspberry-pi-3-ubuntu-16-04-server-upgrade-error. But now I use Raspian.
 
-## GPIO:
+## GPIO: (can be already included in distro)
 I will use the Command line with:
 - git clone git://git.drogon.net/wiringPi
 - cd wiringPi
@@ -49,11 +59,19 @@ Benefit: I don't have to use sudo anymore.
 Problem: I don't have an event emitter I have to loop check.
 
 ## Setup of Motion:
+install motion: $ apt-get install motion
+Go into the config: /etc/motion/motion.conf
 Change the Path of the output to be the same as the AWS sync folder.
-Setup to only capture video of a few sec.
-Changed the Width-Height of the img capture.
-framerate: 5
-minimum_motion_frames: 3
+My current cheep camera setting (lot of vegetation in the front):
+- threshold 3000
+- noise_level 64
+- framerate: 5
+- minimum_motion_frames 4
+- max_movie_time 8
+- ffmpeg_video_codec mpeg1  -> For online video iframe.
+- target_dir $workdir/rpi_HouseAutomation/video
+- movie_filename %Y-%m-%d-%H-%M-%S
+
 
 ## Design History:
 Initial design was to use pi-gpui or rpi-gpio to control the GPIO pins, but that was harder than expected since it failed to work and also need SUDO to run and that is bad practice to run Node as sudo. So I ended-up using wiringPi as childProcess.
