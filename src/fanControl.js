@@ -2,6 +2,7 @@
 
 const { processorFanPin } = require('../config.json');
 const { write1Pin } = require('./gpioActions');
+const { log } = require('./bunyanLogs');
 const fs = require('fs');
 
 let processorFan = false; // On = True;
@@ -12,9 +13,15 @@ const stopFan = () => { write1Pin(processorFanPin, 0); };
 const checkTemperature = () => {
   setInterval(() => {
     const temp = fs.readFileSync('/sys/class/thermal/thermal_zone0/temp');
-    console.log(`currentTemp = ${temp}`);
-    if (processorFan === false && temp > 65000) { startFan(); processorFan = true; }
-    if (processorFan === true && temp < 45000) { stopFan(); processorFan = false; }
+    log.info({ fnct: 'checkTemperature' }, `currentTemp = ${temp}`);
+    if (processorFan === false && temp > 55000) {
+      log.warn({ fnct: 'checkTemperature' }, `Starting Fan at: ${temp}`);
+      startFan(); processorFan = true;
+    }
+    if (processorFan === true && temp < 45000) {
+      log.warn({ fnct: 'checkTemperature' }, `Stopping Fan at: ${temp}`);
+      stopFan(); processorFan = false;
+    }
   }, 60000);
 };
 

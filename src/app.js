@@ -1,11 +1,10 @@
-// To use debug: export DEBUG=core,schedule,sql,img,gpio
-const debug = require('debug')('core');
 const express = require('express');
 const helmet = require('helmet');
 const path = require('path');
 const EventEmitter = require('events');
 const auth = require('basic-auth');
 const awesomeLogger = require('express-bunyan-logger');
+const { log } = require('./bunyanLogs');
 
 const app = express();
 app.use(helmet());
@@ -13,12 +12,12 @@ app.use(helmet());
 // Local Dependency
 const { scheduler } = require('./scheduler');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
-const { resizeAndValidateImg } = require('./openCVManager');
+// const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { monitorDoor, monitorFront } = require('./gpioActions');
-const { addErrorCode, getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
+const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
@@ -35,8 +34,7 @@ setInterval(cleanDisk, config.diskUtility.minDelayBetweenCheck * 60 * 1000); // 
 // Handle the Blind Open/close flow
 let blindStatus;
 myEmitter.on('openBlind', () => {
-  debug('Will Open the blind Now');
-  addErrorCode('Open the Blind', 'NA', 'INFO');
+  log.info({ fnct: 'openBlind' }, 'Will Open the blind Now');
   if (blindStatus !== 'open') {
     // Open All Blind
     for (let i = 0; i < config.blindMotorControl.length; i++) {
@@ -47,8 +45,7 @@ myEmitter.on('openBlind', () => {
 });
 
 myEmitter.on('closeBlind', () => {
-  debug('Will Close the blind Now');
-  addErrorCode('Close the Blind', 'NA', 'INFO');
+  log.info({ fnct: 'closeBlind' }, 'Will Close the blind Now');
   if (blindStatus !== 'closed') {
     for (let i = 0; i < config.blindMotorControl.length; i++) {
       closeBlindSequence(config.blindMotorControl[i]);
@@ -64,14 +61,13 @@ scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 // On movement
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
-  debug('Front Movement detected', new Date());
+  log.info({ fnct: 'movementFront' }, 'Front Movement detected', new Date());
   frontMovement();
 });
 
 myEmitter.on('movement', async () => {
   // Open light
-  debug('Door Movement detected', new Date());
-  addErrorCode('Movement detected', 'NA', 'INFO');
+  log.info({ fnct: 'doorMovement' }, 'Door Movement detected', new Date());
   openLight();
 
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)

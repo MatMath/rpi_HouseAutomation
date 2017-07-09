@@ -1,6 +1,5 @@
-const debug = require('debug')('disk');
-const disk = require('diskusage');
 const fs = require('fs');
+const { log } = require('./bunyanLogs');
 const path = require('path');
 
 const { diskUtility } = require('../config.json');
@@ -16,6 +15,7 @@ const fileNameToTimestamp = (name) => {
 };
 
 const cleanDisk = () => {
+  log.info({ fnct: 'cleanDisk' }, 'Starting the clean disk structure');
   // List and delete folder/data.
   // buffer = 1 day
   const buffer = 1 * 24 * 60 * 60 * 1000;
@@ -23,7 +23,7 @@ const cleanDisk = () => {
     const filetmstamp = fileNameToTimestamp(name);
     if (filetmstamp < Date.now() - buffer) {
       fs.unlinkSync(path.join(videoFolder, name));
-      debug(`Removing file ${name}`);
+      log.info({ fnct: 'cleanDisk' }, `Removing file ${name}`);
     }
     return '';
   });
