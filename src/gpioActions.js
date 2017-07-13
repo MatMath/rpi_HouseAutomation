@@ -1,10 +1,8 @@
 // NOTE: use the -i instead of -g to use the physical pin instead of GPIO. see drogon.net/
-
-const debug = require('debug')('gpio');
+const { log } = require('./bunyanLogs');
 const { exec, execSync } = require('child_process');
 
 const config = require('../config.json');
-const { addErrorCode } = require('./sqlightHandler');
 
 const platform = process.platform; // Currently working building on a Mac so this works for me. You can always use a Env Var instead.
 let movementDetected = 0;
@@ -13,11 +11,11 @@ let movementFront = 0;
 const loadtimeSetup = (nbr, inOut) => {
   if (platform !== 'linux') { return; } // Not on the Pi.
   try {
-    console.log(`Set Pin # ${nbr} at ${inOut}`);
+    log.info({ fnct: 'loadtimeSetup' }, `Set Pin # ${nbr} at ${inOut}`);
     execSync(`gpio export ${nbr} ${inOut}`);
     if (inOut === 'out') { execSync(`gpio -g write ${nbr} 0`); } // Initialise everything at 0. So there is no unknown state.
   } catch (e) {
-    addErrorCode('WriteError', JSON.stringify({ nbr }), 'WARNING');
+    log.error({ fnct: 'loadtimeSetup', error: e }, `ERROR Set Pin # ${nbr} at ${inOut}`);
   }
 };
 
@@ -40,11 +38,11 @@ init();
 
 const read1Pin = (nbr) => {
   if (platform !== 'linux') { return Promise.resolve(0); } // Not on the Pi.
-  debug(`Read Pin ${nbr}`);
+  log.info({ fnct: 'read1Pin' }, `Read Pin ${nbr}`);
   return new Promise((resolve, reject) => {
     exec(`gpio -g read ${nbr}`, (error, stdout, stderr) => {
       if (error || stderr) {
-        addErrorCode('ReadError', JSON.stringify({ nbr }), 'WARNING');
+        log.info({ fnct: 'read1Pin' }, `ERROR Reading Pin ${nbr}`);
         return reject();
       }
       return resolve(parseInt(stdout, 10));
@@ -54,11 +52,11 @@ const read1Pin = (nbr) => {
 
 const write1Pin = (nbr, value) => {
   if (platform !== 'linux') { return Promise.resolve(0); } // Not on the Pi.
-  debug(`Write Pin ${nbr} at ${value}`);
+  log.info({ fnct: 'write1Pin' }, `Write Pin ${nbr} at ${value}`);
   return new Promise((resolve, reject) => {
     exec(`gpio -g write ${nbr} ${value}`, (error, stdout, stderr) => {
       if (error || stderr) {
-        addErrorCode('WriteError', JSON.stringify({ nbr, value }), 'WARNING');
+        log.info({ fnct: 'write1Pin', error }, `ERROR Write Pin ${nbr} at ${value}`);
         return reject();
       }
       return resolve(stdout);
@@ -97,18 +95,18 @@ const monitorDoor = (event) => {
       if (value === 1 && movementDetected < Date.now() + 2000) {
         // adding the front movement detection will block the false alarm (cheep sensor) since the person Absolutely Need to pass on the front door first.
         if (movementFront > Date.now()) {
-          debug('Door Movement detected');
+          log.info({ fnct: 'monitorDoor' }, 'Door Movement detected');
           // Opent he light / Start Camera flow
           movementDetected = Date.now() + config.lightOpen_ms;
           event.emit('movement');
         } else {
           // False alarm at the door.  Count to monitor the State of the sensor/make adjustment.
-          debug('False Movement detected');
+          log.info({ fnct: 'monitorDoor' }, 'False Movement detected');
         }
       }
     })
     .catch((err) => {
-      console.error('Err in the Monitor Door', err);
+      log.error({ fnct: 'monitorDoor', error: err }, 'Err in the Monitor Door');
     });
   }, 200);
 };

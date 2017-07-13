@@ -1,11 +1,10 @@
-const debug = require('debug')('img');
+const { log } = require('./bunyanLogs');
 const easyimage = require('easyimage');
 const path = require('path');
 const fs = require('fs');
-const { addErrorCode } = require('./sqlightHandler');
 
 const resizeImg = async (imgPath, name) => {
-  debug('Resizing ', imgPath);
+  log.info({ fnct: 'resizeImg' }, `Resizing  ${imgPath}`);
   const result = await easyimage.resize({ src: imgPath,
     dst: `./outputData/${name}`,
     width: 1000,
@@ -18,20 +17,18 @@ const resizeImg = async (imgPath, name) => {
 
 const validateAndResizeImg = async (imgPath) => {
   const imgInfo = await easyimage.info(imgPath);
-  debug('Img Info BEFORE: ', imgInfo);
   const imgResize = await resizeImg(imgInfo.path, imgInfo.name);
-  debug('img After resize:', imgResize);
   return imgResize;
 };
 
 const isThereAFaceOnThisImage = () => Promise.resolve(true);
 
 const copyXToY = (from, dest) => new Promise((resolve, reject) => {
-  debug(`Copy From ${from} to ${dest}`);
+  log.info({ fnct: 'copyXToY' }, `Copy From ${from} to ${dest}`);
   const readStream = fs.createReadStream(from);
   readStream.once('error', reject);
   readStream.once('end', () => {
-    debug('End so Add it to a DB to process later.');
+    log.info({ fnct: 'copyXToY' }, 'End so Add it to a DB to process later.');
     return resolve(true);
   });
   readStream.pipe(fs.createWriteStream(dest));
@@ -52,8 +49,7 @@ const resizeAndValidateImg = (original) => {
     return true;
   })
   .catch((err) => {
-    debug('Error in the Img Validation', err);
-    addErrorCode('Error in the Image Validation', err, 'WARNING');
+    log.error({ fnct: 'resizeAndValidateImg', error: err }, 'Error in the Img Validation');
   });
   // Do img Validation on it
 };

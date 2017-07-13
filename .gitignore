@@ -4,6 +4,7 @@ src/db/*
 rootkey.csv
 .aws_credential.txt
 simpleAuth.json
+log/*
 
 # OS generated files #
 ######################

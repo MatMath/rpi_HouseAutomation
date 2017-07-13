@@ -14,7 +14,6 @@
   "dependencies": {
     "basic-auth": "^1.1.0",
     "bunyan": "^1.8.10",
-    "debug": "^2.6.4",
     "diskusage": "^0.2.2",
     "easyimage": "^2.1.0",
     "eslint-plugin-mocha": "^4.11.0",

@@ -1,4 +1,4 @@
-const debug = require('debug')('schedule');
+const { log } = require('./bunyanLogs');
 const schedule = require('node-schedule');
 
 // *    *    *    *    *    *
@@ -14,6 +14,6 @@ const schedule = require('node-schedule');
 module.exports.scheduler = (dateToSet, EventObj, eventToEmit) =>
   schedule.scheduleJob(dateToSet, () => {
     // This also send Event when it get triggered so we can listen to them
-    debug(`Trigger 1 event ${eventToEmit} at: `, new Date());
+    log.info({ fnct: 'scheduleJob' }, `Trigger 1 event ${eventToEmit} at: ${new Date()}`);
     EventObj.emit(eventToEmit);
   });
