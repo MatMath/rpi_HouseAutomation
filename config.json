@@ -18,7 +18,7 @@
   "diskUtility": {
     "tempImgPath": "/home/mathieu/tmp",
     "saveImgPath": "/home/mathieu/rpi_HouseAutomation/video",
-    "minVideoSize": 10000,
+    "minVideoSize": 200000,
     "minMbSpace": 10000,
     "minDelayBetweenCheck": 20
   }

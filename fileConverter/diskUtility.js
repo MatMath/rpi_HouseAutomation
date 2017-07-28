@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { log } = require('./bunyanLogs');
+const { log } = require('../src/bunyanLogs');
 const path = require('path');
 
 const { diskUtility } = require('../config.json');
@@ -22,11 +22,12 @@ const cleanDisk = () => {
   fs.readdirSync(videoFolder).map((name) => {
     const filetmstamp = fileNameToTimestamp(name);
     if (filetmstamp < Date.now() - buffer) {
-      fs.unlinkSync(path.join(videoFolder, name));
       log.info({ fnct: 'cleanDisk' }, `Removing file ${name}`);
+      fs.unlinkSync(path.join(videoFolder, name));
     }
     return '';
   });
 };
+setInterval(cleanDisk, diskUtility.minDelayBetweenCheck * 60 * 1000); // Clean disk space every X min. Better for AWS crawl.
 
 module.exports.cleanDisk = cleanDisk;

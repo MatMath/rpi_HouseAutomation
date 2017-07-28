@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const expect = require('expect.js');
 
-const { cleanDisk } = require('../src/diskUtility');
+const { cleanDisk } = require('../fileConverter/diskUtility');
 const { diskUtility } = require('../config.json');
 
 const videoFolder = diskUtility.saveImgPath;

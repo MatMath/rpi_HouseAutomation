@@ -21,7 +21,6 @@ const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightH
 const config = require('../config.json');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
-const { cleanDisk } = require('./diskUtility');
 require('./fanControl');
 
 class MyEmitter extends EventEmitter {}
@@ -29,7 +28,6 @@ const myEmitter = new MyEmitter();
 
 monitorDoor(myEmitter);
 monitorFront(myEmitter);
-setInterval(cleanDisk, config.diskUtility.minDelayBetweenCheck * 60 * 1000); // Clean disk space every X min. Better for AWS crawl.
 
 // Handle the Blind Open/close flow
 let blindStatus;
