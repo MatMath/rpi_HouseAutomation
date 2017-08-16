@@ -28,7 +28,7 @@ const convertVideo = () => {
     // Check Video Size if more than limit start conversion.
     if (stat.size > diskUtility.minVideoSize) {
       try {
-        execSync(`ffmpeg -i ${fullpath} ${outputPath}`);
+        execSync(`avconv -i ${fullpath} ${outputPath}`);
         log.info({ fnct: 'convertVideo' }, `${name} File converted`);
       } catch (e) {
         log.error({ fnct: 'convertVideo', error: e }, `Error in File converted of ${name}`);

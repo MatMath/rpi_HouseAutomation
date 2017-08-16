@@ -1,6 +1,9 @@
 # House automation
 This will control some motor, light detector, a USB camera to automate the house.
 
+## But Why?
+If you want a simple system all build already use: https://github.com/ccrisan/motioneyeos I did that because I was bored and I wanted to control more than just the camera.
+
 ## Short setup checklist from blank SD Card:
 - Download/install Raspian
 - Update upgrade all package.

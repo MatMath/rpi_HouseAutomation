@@ -6,6 +6,7 @@ const name = 'rpi';
 
 // Rotate the logs daily and keep 7 days.
 const debugLogsLocation = path.join(__dirname, '../logs', 'debug.log');
+const infoLogsLocation = path.join(__dirname, '../logs', 'info.log');
 const warnLogsLocation = path.join(__dirname, '../logs', 'warn.log');
 if (!fs.existsSync(path.join(__dirname, '../logs'))) {
   fs.mkdirSync(path.join(__dirname, '../logs'));
@@ -21,7 +22,10 @@ module.exports.log = bunyan.createLogger({
     count: 10,
   }, {
     level: 'info',
-    stream: process.stdout,
+    type: 'rotating-file',
+    path: infoLogsLocation,
+    period: '1d',
+    count: 10,
   }, {
     level: 'warn',
     type: 'rotating-file',
