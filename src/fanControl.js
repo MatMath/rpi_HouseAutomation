@@ -1,6 +1,6 @@
 // Note: The GPIO cannot run the fan, this open a Transistor (3.3v) and the transistor power the fan (5v).
 
-const { processorFanPin } = require('../config.json');
+const { processorFanPin } = require('config');
 const { write1Pin } = require('./gpioActions');
 const { log } = require('./bunyanLogs');
 const fs = require('fs');

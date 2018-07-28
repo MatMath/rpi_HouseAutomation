@@ -3,7 +3,7 @@ const express = require('express');
 // own Dependency
 const { openLight } = require('./lightAction');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
-const config = require('../config.json');
+const config = require('config');
 
 const router = express.Router();
 

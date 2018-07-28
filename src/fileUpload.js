@@ -3,7 +3,7 @@
 const { exec, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { diskUtility } = require('../config.json');
+const { diskUtility } = require('config');
 const { log } = require('./bunyanLogs');
 
 const tempImgPath = diskUtility.tempImgPath;

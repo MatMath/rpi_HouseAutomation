@@ -1,6 +1,6 @@
 const gpioActions = require('./gpioActions'); // I need to import the whole module because of Sinon to stub it. :(
 const { log } = require('./bunyanLogs');
-const config = require('../config.json');
+const config = require('config');
 
 const validateMotorActions = async (obj, id) => {
   // {"motorOpen":3, "motorClose":3, "openLimitSwitch": 5, "closeLimitSwitch": 5}

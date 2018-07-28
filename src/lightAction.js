@@ -4,10 +4,10 @@
 // Other All in 1 possibility: https://www.sparkfun.com/products/10747
 
 const { log } = require('./bunyanLogs');
-const { lightOpenSSR } = require('../config.json');
+const { lightOpenSSR } = require('config');
 const { write1Pin } = require('./gpioActions');
 const { doorMovement } = require('./sqlightHandler');
-const config = require('../config.json');
+const config = require('config');
 
 const closeLight = () => {
   log.info({ fnct: 'closeLight' }, `Close light ${new Date()}`);
