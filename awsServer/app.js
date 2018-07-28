@@ -4,6 +4,8 @@ const express = require('express');
 const helmet = require('helmet');
 const awesomeLogger = require('express-bunyan-logger');
 
+const errorMiddlware = require('../src/middleware/error');
+
 const { getList, deleteItem, moveItem, giveSignedUrl } = require('./awsFunctions');
 
 const possibleFolder = ['richard', 'car', 'people'];
@@ -73,14 +75,7 @@ app.get('/', (req, res) => {
   res.json(['/listday/2017-05-26/:subfolder', '/move/:key/:destination', '/signed/:subfolder/:key']);
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {},
-    title: 'error',
-  });
-});
+app.use(errorMiddlware);
 
 app.set('port', process.env.API_PORT || 4242);
 const server = app.listen(app.get('port'), () => {

@@ -2,13 +2,12 @@ const express = require('express');
 const helmet = require('helmet');
 const EventEmitter = require('events');
 const awesomeLogger = require('express-bunyan-logger');
-const { log } = require('./bunyanLogs');
-const checkPermission = require('./middleware/checkPermission');
-
-const app = express();
-app.use(helmet());
 
 // Local Dependency
+const checkPermission = require('./middleware/checkPermission');
+const errorMiddlware = require('./middleware/error');
+const { log } = require('./bunyanLogs');
+
 const { scheduler } = require('./scheduler');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 // const { resizeAndValidateImg } = require('./openCVManager');
@@ -21,6 +20,8 @@ const config = require('config');
 const userControls = require('./userControls');
 require('./fanControl');
 
+const app = express();
+app.use(helmet());
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
@@ -110,5 +111,7 @@ app.use('/video', express.static('video'));
 app.get('/', (req, res) => {
   res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
 });
+
+app.use(errorMiddlware);
 
 module.exports = app;
