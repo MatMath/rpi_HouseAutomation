@@ -2,7 +2,7 @@
 const { log } = require('./bunyanLogs');
 const { exec, execSync } = require('child_process');
 
-const config = require('../config.json');
+const config = require('config');
 
 const platform = process.platform; // Currently working building on a Mac so this works for me. You can always use a Env Var instead.
 let movementDetected = 0;

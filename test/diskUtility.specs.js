@@ -3,7 +3,7 @@ const path = require('path');
 const expect = require('expect.js');
 
 const { cleanDisk } = require('../fileConverter/diskUtility');
-const { diskUtility } = require('../config.json');
+const { diskUtility } = require('config');
 
 const videoFolder = diskUtility.saveImgPath;
 describe('testing the flow of disk Utility', () => {

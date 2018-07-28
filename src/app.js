@@ -18,7 +18,7 @@ const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
-const config = require('../config.json');
+const config = require('config');
 const userControls = require('./userControls');
 const { credentials } = require('../simpleAuth.json');
 require('./fanControl');
@@ -120,7 +120,7 @@ app.get('/FrontMovement', (req, res) => {
     humanReadable: new Date(item.evenementAt),
   }))));
 });
-app.use('/video', express.static('video'))
+app.use('/video', express.static('video'));
 app.get('/', (req, res) => {
   res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
 });

@@ -2,7 +2,7 @@ const fs = require('fs');
 const { log } = require('../src/bunyanLogs');
 const path = require('path');
 
-const { diskUtility } = require('../config.json');
+const { diskUtility } = require('config');
 
 const videoFolder = diskUtility.saveImgPath;
 if (!fs.existsSync(videoFolder)) { fs.mkdirSync(videoFolder); }
