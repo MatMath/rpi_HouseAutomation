@@ -1,15 +1,13 @@
 const express = require('express');
 const helmet = require('helmet');
-const path = require('path');
 const EventEmitter = require('events');
-const auth = require('basic-auth');
 const awesomeLogger = require('express-bunyan-logger');
-const { log } = require('./bunyanLogs');
-
-const app = express();
-app.use(helmet());
 
 // Local Dependency
+const checkPermission = require('./middleware/checkPermission');
+const errorMiddlware = require('./middleware/error');
+const { log } = require('./bunyanLogs');
+
 const { scheduler } = require('./scheduler');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 // const { resizeAndValidateImg } = require('./openCVManager');
@@ -20,9 +18,10 @@ const { monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 const config = require('config');
 const userControls = require('./userControls');
-const { credentials } = require('../simpleAuth.json');
 require('./fanControl');
 
+const app = express();
+app.use(helmet());
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
@@ -70,7 +69,7 @@ myEmitter.on('movement', async () => {
 
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
   syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
-  const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
+  // const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
   // Resize to appropriate level
   // Do img Validation on it
   // resizeAndValidateImg(imgPath); // This will run on each image that get in in paralle.
@@ -84,18 +83,6 @@ myEmitter.on('movement', async () => {
 // Save the "best" frame that the face get detected in (for future email or processing) and drop the rest?
 
 // Upload all img on the server / Dropbox / G.Drive / S3.
-
-const checkPermission = (req, res, next) => {
-  const userInput = auth(req);
-  if (!userInput || !credentials[userInput.name] || userInput.pass !== credentials[userInput.name]) {
-    res.statusCode = 401;
-    res.setHeader('WWW-Authenticate', 'Basic realm="example"');
-    res.end('Access denied');
-  } else {
-    next();
-  }
-};
-
 
 // Clean all file older than X day for space. (32G locally).
 app.use(awesomeLogger({
@@ -124,5 +111,7 @@ app.use('/video', express.static('video'));
 app.get('/', (req, res) => {
   res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
 });
+
+app.use(errorMiddlware);
 
 module.exports = app;

@@ -1,4 +1,12 @@
 module.exports = {
+  credentials: {
+    comments: 'Wait WAHT???  User and password in plain text??? How' +
+      'insaine!?! But this is for my house lighting and blind control' +
+      'hosted on my Pi so no extreme secret here... You should use' +
+      'Passport for User auth and jwt for communication, but I wont.',
+    matmath: 'notGonnaTypeThat',
+    bob: 'montreal',
+  },
   openMorningAt: 7,
   closeEveningAt: 19,
   doorMovementDetectionPin: 23,

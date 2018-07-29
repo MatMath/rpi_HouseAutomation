@@ -3,9 +3,9 @@
 const express = require('express');
 const helmet = require('helmet');
 const awesomeLogger = require('express-bunyan-logger');
-const auth = require('basic-auth');
 
-const { credentials } = require('../simpleAuth.json');
+const errorMiddlware = require('../src/middleware/error');
+
 const { getList, deleteItem, moveItem, giveSignedUrl } = require('./awsFunctions');
 
 const possibleFolder = ['richard', 'car', 'people'];
@@ -17,18 +17,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-
-// Way too simple for production but ok for Home fun
-const checkPermission = (req, res, next) => {
-  const userInput = auth(req);
-  if (!userInput || !credentials[userInput.name] || userInput.pass !== credentials[userInput.name]) {
-    res.statusCode = 401;
-    res.setHeader('WWW-Authenticate', 'Basic realm="example"');
-    res.end('Access denied');
-  } else {
-    next();
-  }
-};
 
 app.use(awesomeLogger({
   name: 'logger',
@@ -87,14 +75,7 @@ app.get('/', (req, res) => {
   res.json(['/listday/2017-05-26/:subfolder', '/move/:key/:destination', '/signed/:subfolder/:key']);
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {},
-    title: 'error',
-  });
-});
+app.use(errorMiddlware);
 
 app.set('port', process.env.API_PORT || 4242);
 const server = app.listen(app.get('port'), () => {
