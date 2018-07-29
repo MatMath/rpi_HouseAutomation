@@ -2,5 +2,6 @@
 
 forever \
 start \
+-al $LOGDIR/logs/rpiout.log \
 -ae $LOGDIR/logs/rpierr.log \
 ./bin/www
