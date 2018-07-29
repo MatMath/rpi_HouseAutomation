@@ -8,15 +8,15 @@ const checkPermission = require('./middleware/checkPermission');
 const errorMiddlware = require('./middleware/error');
 const { log } = require('./bunyanLogs');
 
-const { scheduler } = require('./scheduler');
-const { openBlindSequence, closeBlindSequence } = require('./blindActions');
+// const { scheduler } = require('./scheduler');
+// const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 // const { resizeAndValidateImg } = require('./openCVManager');
 const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
-const config = require('config');
+// const config = require('config');
 const userControls = require('./userControls');
 require('./fanControl');
 
@@ -29,30 +29,30 @@ monitorDoor(myEmitter);
 monitorFront(myEmitter);
 
 // Handle the Blind Open/close flow
-let blindStatus;
-myEmitter.on('openBlind', () => {
-  log.info({ fnct: 'openBlind' }, 'Will Open the blind Now');
-  if (blindStatus !== 'open') {
-    // Open All Blind
-    for (let i = 0; i < config.blindMotorControl.length; i++) {
-      openBlindSequence(config.blindMotorControl[i]);
-    }
-    blindStatus = 'open';
-  }
-});
-
-myEmitter.on('closeBlind', () => {
-  log.info({ fnct: 'closeBlind' }, 'Will Close the blind Now');
-  if (blindStatus !== 'closed') {
-    for (let i = 0; i < config.blindMotorControl.length; i++) {
-      closeBlindSequence(config.blindMotorControl[i]);
-    }
-    blindStatus = 'closed';
-  }
-});
-
-scheduler(`0 ${config.openMorningAt} * * *`, myEmitter, 'openBlind');
-scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
+// let blindStatus;
+// myEmitter.on('openBlind', () => {
+//   log.info({ fnct: 'openBlind' }, 'Will Open the blind Now');
+//   if (blindStatus !== 'open') {
+//     // Open All Blind
+//     for (let i = 0; i < config.blindMotorControl.length; i++) {
+//       openBlindSequence(config.blindMotorControl[i]);
+//     }
+//     blindStatus = 'open';
+//   }
+// });
+//
+// myEmitter.on('closeBlind', () => {
+//   log.info({ fnct: 'closeBlind' }, 'Will Close the blind Now');
+//   if (blindStatus !== 'closed') {
+//     for (let i = 0; i < config.blindMotorControl.length; i++) {
+//       closeBlindSequence(config.blindMotorControl[i]);
+//     }
+//     blindStatus = 'closed';
+//   }
+// });
+//
+// scheduler(`0 ${config.openMorningAt} * * *`, myEmitter, 'openBlind');
+// scheduler(`0 ${config.closeEveningAt} * * *`, myEmitter, 'closeBlind');
 
 
 // On movement
