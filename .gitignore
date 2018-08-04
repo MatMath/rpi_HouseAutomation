@@ -3,7 +3,6 @@ outputData/
 src/db/*
 rootkey.csv
 .aws_credential.txt
-simpleAuth.json
 log/*
 logs/*
 
@@ -12,6 +11,9 @@ logs/*
 .DS_Store
 .DS_Store?
 
+
+config/production.json
+config/production.js
 
 config/local.json
 config/local.js
