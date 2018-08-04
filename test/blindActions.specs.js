@@ -10,7 +10,7 @@ const { validateMotorActions, monitorMotorsPins } = require('../src/blindActions
 
 describe('testing the blind sequence', function bob() {
   this.timeout(5000);
-  const sandbox = sinon.sandbox.create();
+  const sandbox = sinon.createSandbox();
 
   afterEach(() => {
     sandbox.restore();

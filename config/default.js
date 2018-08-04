@@ -7,6 +7,17 @@ module.exports = {
     matmath: 'notGonnaTypeThat',
     bob: 'montreal',
   },
+  hardware: {
+    cpu: {
+      temperature: {
+        filepath: '/sys/class/thermal/thermal_zone0/temp',
+        threshold: {
+          cold: 45000,
+          warm: 55000,
+        },
+      },
+    },
+  },
   openMorningAt: 7,
   closeEveningAt: 19,
   doorMovementDetectionPin: 23,

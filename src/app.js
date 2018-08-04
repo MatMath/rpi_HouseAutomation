@@ -18,7 +18,9 @@ const { monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 // const config = require('config');
 const userControls = require('./userControls');
-require('./fanControl');
+const fanControl = require('./fanControl');
+
+fanControl.startMonitoring();
 
 const app = express();
 app.use(helmet());
