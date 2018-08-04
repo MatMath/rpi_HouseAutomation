@@ -88,7 +88,7 @@ myEmitter.on('movement', async () => {
 app.use(awesomeLogger({
   name: 'logger',
   streams: [{
-    level: 'warn',
+    level: 'INFO',
     stream: process.stdout,
   }],
 }));
