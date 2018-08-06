@@ -15,6 +15,7 @@
     "basic-auth": "^1.1.0",
     "bunyan": "^1.8.10",
     "config": "^2.0.0",
+    "debug": "^3.1.0",
     "diskusage": "^0.2.2",
     "easyimage": "^2.1.0",
     "eslint-plugin-mocha": "^4.11.0",
