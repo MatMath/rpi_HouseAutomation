@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const EventEmitter = require('events');
-const awesomeLogger = require('express-bunyan-logger');
+const expressBunyanLogger = require('express-bunyan-logger');
 
 // Local Dependency
 const checkPermission = require('./middleware/checkPermission');
@@ -11,7 +11,7 @@ const { log } = require('./bunyanLogs');
 // const { scheduler } = require('./scheduler');
 // const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 // const { resizeAndValidateImg } = require('./openCVManager');
-const { getAllErrLogs } = require('./sqlightHandler');
+// const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
 const { monitorDoor, monitorFront } = require('./gpioActions');
@@ -87,15 +87,15 @@ myEmitter.on('movement', async () => {
 // Upload all img on the server / Dropbox / G.Drive / S3.
 
 // Clean all file older than X day for space. (32G locally).
-app.use(awesomeLogger({
-  name: 'logger',
+app.use(expressBunyanLogger({
+  name: 'express',
   streams: [{
-    level: 'INFO',
+    level: process.env.BUNYAN_LOG_LEVEL || 'INFO',
     stream: process.stdout,
   }],
 }));
-app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
-app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
+// app.get('/logs', (req, res) => getAllErrLogs().then(logs => res.json(logs)));
+// app.get('/logs/delete', (req, res) => getAllErrLogs(true).then(logs => res.json(logs)));
 app.use('/actions', checkPermission, userControls);
 app.get('/DoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
@@ -111,7 +111,7 @@ app.get('/FrontMovement', (req, res) => {
 });
 app.use('/video', express.static('video'));
 app.get('/', (req, res) => {
-  res.json(['/logs', '/logs/delete', '/actions', '/DoorMovement', 'FrontMovement']);
+  res.json([/* '/logs', '/logs/delete', */'/actions', '/DoorMovement', 'FrontMovement']);
 });
 
 app.use(errorMiddlware);

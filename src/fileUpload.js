@@ -3,11 +3,11 @@
 const { exec, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { diskUtility } = require('config');
+const { disk } = require('config');
 const { log } = require('./bunyanLogs');
 
-const tempImgPath = diskUtility.tempImgPath;
-const videoFolder = diskUtility.saveImgPath;
+const tempImgPath = disk.tempImgPath;
+const videoFolder = disk.saveImgPath;
 
 const syncFolder = () => {
   exec('aws s3  sync  ./video/  s3://backupforpi/video/', (err, stdout, stderr) => {
@@ -26,7 +26,7 @@ const convertVideo = () => {
     const outputPath = path.join(videoFolder, name.replace('.avi', '.mp4'));
     const stat = fs.statSync(fullpath);
     // Check Video Size if more than limit start conversion.
-    if (stat.size > diskUtility.minVideoSize) {
+    if (stat.size > disk.minVideoSize) {
       try {
         execSync(`avconv -i ${fullpath} ${outputPath}`);
         log.info({ fnct: 'convertVideo' }, `${name} File converted`);

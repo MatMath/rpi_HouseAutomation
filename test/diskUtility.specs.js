@@ -3,9 +3,9 @@ const path = require('path');
 const expect = require('expect.js');
 
 const { cleanDisk } = require('../fileConverter/diskUtility');
-const { diskUtility } = require('config');
+const { disk } = require('config');
 
-const videoFolder = diskUtility.saveImgPath;
+const videoFolder = disk.saveImgPath;
 describe('testing the flow of disk Utility', () => {
   const listOfFiles = [
     '2017-05-23-21-53-18.avi',

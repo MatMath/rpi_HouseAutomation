@@ -2,9 +2,9 @@ const fs = require('fs');
 const { log } = require('../src/bunyanLogs');
 const path = require('path');
 
-const { diskUtility } = require('config');
+const { disk } = require('config');
 
-const videoFolder = diskUtility.saveImgPath;
+const videoFolder = disk.saveImgPath;
 if (!fs.existsSync(videoFolder)) { fs.mkdirSync(videoFolder); }
 
 // input 2017-04-23-21-53-18
@@ -28,6 +28,6 @@ const cleanDisk = () => {
     return '';
   });
 };
-setInterval(cleanDisk, diskUtility.minDelayBetweenCheck * 60 * 1000); // Clean disk space every X min. Better for AWS crawl.
+setInterval(cleanDisk, disk.minDelayBetweenCheck * 60 * 1000); // Clean disk space every X min. Better for AWS crawl.
 
 module.exports.cleanDisk = cleanDisk;
