@@ -5,4 +5,6 @@ app.set('port', process.env.API_PORT || 3742);
 
 const server = app.listen(app.get('port'), () => {
   console.log(`Express server listening on port ${server.address().port}`);
+
+  app.initMonitors();
 });
