@@ -13,23 +13,26 @@ const { log } = require('./bunyanLogs');
 // const { resizeAndValidateImg } = require('./openCVManager');
 // const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
-const { syncFolder } = require('./fileUpload');
-const { gpioInit, monitorDoor, monitorFront } = require('./gpioActions');
+const fileUpload = require('./fileUpload');
+const gpioActions = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 // const config = require('config');
 const userControls = require('./userControls');
 const fanControl = require('./fanControl');
 
-fanControl.startMonitoring();
 
 const app = express();
 app.use(helmet());
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
-gpioInit();
-monitorDoor(myEmitter);
-monitorFront(myEmitter);
+app.initMonitors = () => {
+  fanControl.startMonitoring();
+  fileUpload.monitorVideoDirectory();
+  gpioActions.gpioInit();
+  gpioActions.monitorDoor(myEmitter);
+  gpioActions.monitorFront(myEmitter);
+};
 
 // Handle the Blind Open/close flow
 // let blindStatus;
@@ -71,7 +74,7 @@ myEmitter.on('movement', async () => {
   openLight();
 
   // Upload the image Online immediately (in case Of Break in I want all image, later we can filter them.)
-  syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
+  fileUpload.syncFolder(); // TODO: Make this smart so we Upload after a few frames to prevent the loss of data (break-in flow) and also after done processing everything.
   // const imgPath = path.join(__dirname, '../sampleData/GreatDay.jpg');
   // Resize to appropriate level
   // Do img Validation on it

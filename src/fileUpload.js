@@ -9,40 +9,49 @@ const { log } = require('./bunyanLogs');
 const tempImgPath = disk.tempImgPath;
 const videoFolder = disk.saveImgPath;
 
-const syncFolder = () => {
-  exec('aws s3  sync  ./video/  s3://backupforpi/video/', (err, stdout, stderr) => {
-    if (err || stderr) {
-      log.error({ fnct: 'syncFolder', error: stderr, stdout }, 'AWS upload Failed');
-    }
-    log.info({ fnct: 'syncFolder', stdout }, 'AWS upload');
-  });
-};
-
-const convertVideo = () => {
-  // Why ?? Because motion cannot save to mp4 directly even if it use ffmpeg under.
-  fs.readdirSync(tempImgPath).map((name) => {
-    // Make list of all video in folder.
-    const fullpath = path.join(tempImgPath, name);
-    const outputPath = path.join(videoFolder, name.replace('.avi', '.mp4'));
-    const stat = fs.statSync(fullpath);
-    // Check Video Size if more than limit start conversion.
-    if (stat.size > disk.minVideoSize) {
-      try {
-        execSync(`avconv -i ${fullpath} ${outputPath}`);
-        log.info({ fnct: 'convertVideo' }, `${name} File converted`);
-      } catch (e) {
-        log.error({ fnct: 'convertVideo', error: e }, `Error in File converted of ${name}`);
+const fileUpload = {
+  syncFolder: function syncFolder() {
+    exec('aws s3  sync  ./video/  s3://backupforpi/video/', (err, stdout, stderr) => {
+      if (err || stderr) {
+        log.error({ fnct: 'syncFolder', error: stderr, stdout }, 'AWS upload Failed');
+        return;
       }
+      log.info({ fnct: 'syncFolder', stdout }, 'AWS upload');
+    });
+  },
+  convertVideo: function convertVideo() {
+    // Why ?? Because motion cannot save to mp4 directly even if it use ffmpeg under.
+    fs.readdirSync(tempImgPath).map((name) => {
+      // Make list of all video in folder.
+      const fullpath = path.join(tempImgPath, name);
+      const outputPath = path.join(videoFolder, name.replace('.avi', '.mp4'));
+      const stat = fs.statSync(fullpath);
+      // Check Video Size if more than limit start conversion.
+      if (stat.size > disk.minVideoSize) {
+        try {
+          execSync(`avconv -i ${fullpath} ${outputPath}`);
+          log.info({ fnct: 'convertVideo' }, `${name} File converted`);
+        } catch (e) {
+          log.error({ fnct: 'convertVideo', error: e }, `Error in File converted of ${name}`);
+        }
+      }
+      // delete temp file
+      try {
+        fs.unlinkSync(fullpath);
+      } catch (e) {
+        log.error({ fnct: 'convertVideo', error: e }, `Unable to unlink  ${fullpath}`);
+      }
+      return name;
+    });
+    // Convert the video to mp4 for Embeded html tag
+    // delete avi video.
+  },
+  monitorVideoDirectory: function monitorVideoDirectory() {
+    if (this.interval) {
+      return;
     }
-    // delete temp file
-    fs.unlink(fullpath);
-    return name;
-  });
-  // Convert the video to mp4 for Embeded html tag
-  // delete avi video.
+    this.interval = setInterval(this.convertVideo, 10000);
+  },
 };
 
-setInterval(convertVideo, 10000);
-
-module.exports.syncFolder = syncFolder;
-module.exports.convertVideo = convertVideo;
+module.exports = fileUpload;
