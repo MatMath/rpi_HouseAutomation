@@ -9,6 +9,7 @@ if (!fs.existsSync(videoFolder)) {
   fs.mkdirSync(videoFolder);
 }
 
+// input 2017-04-23-21-53-18
 function fileNameToTimestamp(name) {
   const dateSplit = name.split('-').map(item => parseInt(item, 10));
   // substract 1 month. 0 to 11.
@@ -16,7 +17,6 @@ function fileNameToTimestamp(name) {
   return new Date(...dateSplit).getTime();
 }
 
-// input 2017-04-23-21-53-18
 const diskUtility = {
   cleanDisk: function cleanDisk() {
     log.info({ fnct: 'cleanDisk' }, 'Starting the clean disk structure');
