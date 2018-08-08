@@ -14,7 +14,7 @@ const { log } = require('./bunyanLogs');
 // const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const { syncFolder } = require('./fileUpload');
-const { monitorDoor, monitorFront } = require('./gpioActions');
+const { gpioInit, monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
 // const config = require('config');
 const userControls = require('./userControls');
@@ -27,6 +27,7 @@ app.use(helmet());
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
+gpioInit();
 monitorDoor(myEmitter);
 monitorFront(myEmitter);
 

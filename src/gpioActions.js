@@ -20,7 +20,7 @@ const loadtimeSetup = (nbr, inOut) => {
 };
 
 // Some pins need to be setup at load time for Out and In and the default value.
-function init() {
+function gpioInit() {
   loadtimeSetup(config.doorMovementDetectionPin, 'in');
   loadtimeSetup(config.frontMovementDetectionPin, 'in');
   loadtimeSetup(config.aliveLight, 'out');
@@ -34,7 +34,6 @@ function init() {
     loadtimeSetup(blind.closeLimitSwitch, 'in');
   }
 }
-init();
 
 const read1Pin = (nbr) => {
   if (platform !== 'linux') { return Promise.resolve(0); } // Not on the Pi.
@@ -111,6 +110,7 @@ const monitorDoor = (event) => {
   }, 200);
 };
 
+module.exports.gpioInit = gpioInit;
 module.exports.read1Pin = read1Pin;
 module.exports.write1Pin = write1Pin;
 module.exports.monitorFront = monitorFront;
