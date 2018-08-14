@@ -54,7 +54,9 @@ const resizeAndValidateImg = (original) => {
   // Do img Validation on it
 };
 
-module.exports.validateAndResizeImg = validateAndResizeImg; // not needed but for testing flow.
-module.exports.isThereAFaceOnThisImage = isThereAFaceOnThisImage; // not needed but for testing flow.
-module.exports.resizeAndValidateImg = resizeAndValidateImg;
-module.exports.copyXToY = copyXToY; // not needed but for testing flow.
+module.exports = {
+  validateAndResizeImg, // not needed but for testing flow.
+  isThereAFaceOnThisImage, // not needed but for testing flow.
+  resizeAndValidateImg,
+  copyXToY, // not needed but for testing flow.
+};

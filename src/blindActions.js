@@ -68,7 +68,9 @@ const closeBlindSequence = (motorPinoutData) => {
   monitorMotorsPins();
 };
 
-module.exports.openBlindSequence = openBlindSequence;
-module.exports.closeBlindSequence = closeBlindSequence;
-module.exports.validateMotorActions = validateMotorActions;
-module.exports.monitorMotorsPins = monitorMotorsPins;
+module.exports = {
+  openBlindSequence,
+  closeBlindSequence,
+  validateMotorActions,
+  monitorMotorsPins,
+};

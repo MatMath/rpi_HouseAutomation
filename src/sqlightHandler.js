@@ -71,7 +71,9 @@ const getFrontMovement = () => {
 
 module.exports.generateDBAndTable = generateDBAndTable;
 
-module.exports.doorMovement = doorMovement;
-module.exports.getDoorMovement = getDoorMovement;
-module.exports.frontMovement = frontMovement;
-module.exports.getFrontMovement = getFrontMovement;
+module.exports = {
+  doorMovement,
+  getDoorMovement,
+  frontMovement,
+  getFrontMovement,
+};
