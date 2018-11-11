@@ -20,15 +20,33 @@ const dBconnect = async () => {
   }
 };
 
-const frontMovement() {
-
+const addFrontMovementLog = () => {
+  const collection = dbName.collection('frontmovement');
+  // Insert some documents
+  return collection.insertOne({frontDetection: date.now()})
+  .catch(error => log.error({ fnct: 'Mongo Front movement', error }, 'Err pushing to Mongo'));
 }
 
-const doorMovement() {
-  
+const addDoorMovementLog = () => {
+  const collection = dbName.collection('doormovement');
+  // Insert some documents
+  return collection.insertOne({doorDetection: date.now()})
+  .catch(error => log.error({ fnct: 'Mongo Door movement', error }, 'Err pushing to Mongo'));
+}
+
+const getFrontMovement = () => {
+  return ['tbd'];
+}
+
+const getDoorMovement = () => {
+  return ['tbd'];
 }
 
 module.exports = {
   dBconnect,
+  addFrontMovementLog,
+  getFrontMovement,
+  addDoorMovementLog,
+  getDoorMovement,
   getDbHandle: () => dbName,
 };
