@@ -1,9 +1,9 @@
 module.exports = {
   credentials: {
-    comments: 'Wait WAHT???  User and password in plain text??? How' +
-      'insaine!?! But this is for my house lighting and blind control' +
-      'hosted on my Pi so no extreme secret here... You should use' +
-      'Passport for User auth and jwt for communication, but I wont.',
+    comments: `Wait WAHT???  User and password in plain text??? How
+      insaine!?! But this is for my house lighting and blind control
+      hosted on my Pi so no extreme secret here... You should use
+      Passport for User auth and jwt for communication, but I wont.`,
     matmath: 'notGonnaTypeThat',
     bob: 'montreal',
   },
@@ -43,4 +43,6 @@ module.exports = {
     minMbSpace: 10000,
     minDelayBetweenCheck: 20,
   },
+  mongourl: process.env.MONGO_URL || '',
+  mongoDBName: process.env.MONGO_DBNAME || 'rpi',
 };
