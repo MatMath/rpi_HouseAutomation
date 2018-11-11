@@ -21,10 +21,6 @@ const generateDBAndTable = fullPath => new Promise((resolve, reject) => {
   cashDb.serialize(() => {
     cashDb.run('CREATE TABLE doormovement (evenementAt DATE)');
     cashDb.run('CREATE TABLE frontmovement (evenementAt DATE)');
-    cashDb.run('CREATE TABLE errorlogs (message TEXT, code TEXT, severity TEXT, event_date DATE)', [], (e) => {
-      if (e) { reject(e); }
-      resolve();
-    });
   }, (err) => {
     if (err) { reject(err); }
   });
