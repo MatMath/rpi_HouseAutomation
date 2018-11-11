@@ -4,6 +4,7 @@
   "description": "Something to occupy the time",
   "main": "index.js",
   "scripts": {
+    "commit": "npx git-cz",
     "test": "NODE_ENV=test mocha",
     "start": "node bin/www",
     "server": "nodemon awsServer/app.js",
@@ -28,11 +29,18 @@
     "rpi-gpio": "^0.7.0"
   },
   "devDependencies": {
+    "commitizen": "^3.0.4",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
     "eslint-plugin-import": "^2.2.0",
     "expect.js": "^0.3.1",
     "mocha": "^5.2.0",
     "sinon": "^6.1.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
