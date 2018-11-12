@@ -23,9 +23,26 @@ const dBconnect = async () => {
 const addFrontMovementLog = () => {
   const collection = dbName.collection('frontmovement');
   // Insert some documents
-  return collection.insertOne({frontDetection: date.now()})
-  .catch(error => log.error({ fnct: 'Mongo Front movement', error }, 'Err pushing to Mongo'));
+  return collection.insertOne({frontDetection: Date.now()})
+  .catch(error => {
+    log.error({ fnct: 'Mongo Front movement', error }, 'Err pushing to Mongo')
+  });
 }
+
+const getFrontMovement = (date) => {
+  const latest = date || Date.now() - 604800000; // 1 week
+  // Date need to be in JS numeric format only.
+  return new Promise(function(resolve, reject) {
+    // for some reason Mongo send a first "resolve" before it is time.
+    dbName.collection('frontmovement')
+    .find({"frontDetection": { $gte : latest }})
+    .toArray((err, results) => {
+      if (err) { return log.error({ fnct: 'Mongo GET Front movement', error }, 'Err Get of Mongo'); }
+      resolve(results);
+    });
+  });
+
+};
 
 const addDoorMovementLog = () => {
   const collection = dbName.collection('doormovement');
@@ -34,12 +51,10 @@ const addDoorMovementLog = () => {
   .catch(error => log.error({ fnct: 'Mongo Door movement', error }, 'Err pushing to Mongo'));
 }
 
-const getFrontMovement = () => {
-  return ['tbd'];
-}
-
 const getDoorMovement = () => {
-  return ['tbd'];
+  const latest = date || Date.now() - 604800000; // 1 week
+  const collection = dbName.collection('doormovement');
+  return collection.find({"doorDetection" : { $gte : new Date(latest) }})
 }
 
 module.exports = {

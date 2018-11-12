@@ -1,22 +1,24 @@
+const expect = require('expect.js');
+
 const { dBconnect, addFrontMovementLog, getFrontMovement, addDoorMovementLog, getDoorMovement, getDbHandle } = require('../src/mongodbHandler');
 
 xdescribe('mongodbHandler', () => {
-  before(function() {
+  const timestamp = Date.now() - 1000;
+  before(function(done) {
+    dBconnect().then((tmp) => {
+      done();
+    });
     // Open DB;
     // Clear all logs if any.
   })
-  describe('Front movement', () => {
 
-    it('Add front movement', () => {
-      //
-    });
-
-    it('Check front movement log', () => {
-      //
-    });
+  it('Add front movement', async function() {
+    await addFrontMovementLog()
+    const list = await getFrontMovement(timestamp);
+    expect(list.length).to.equal(1);
   });
 
-  describe('Door movement', () => {
+  xdescribe('Door movement', () => {
 
     it('Add door movement', () => {
       //
