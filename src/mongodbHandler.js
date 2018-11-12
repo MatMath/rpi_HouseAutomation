@@ -45,16 +45,23 @@ const getFrontMovement = (date) => {
 };
 
 const addDoorMovementLog = () => {
-  const collection = dbName.collection('doormovement');
   // Insert some documents
-  return collection.insertOne({doorDetection: date.now()})
+  return dbName.collection('doormovement')
+  .insertOne({doorDetection: Date.now()})
   .catch(error => log.error({ fnct: 'Mongo Door movement', error }, 'Err pushing to Mongo'));
 }
 
-const getDoorMovement = () => {
+const getDoorMovement = (date) => {
   const latest = date || Date.now() - 604800000; // 1 week
-  const collection = dbName.collection('doormovement');
-  return collection.find({"doorDetection" : { $gte : new Date(latest) }})
+  return new Promise(function(resolve, reject) {
+    // for some reason Mongo send a first "resolve" before it is time.
+    dbName.collection('doormovement')
+    .find({"doorDetection": { $gte : latest }})
+    .toArray((err, results) => {
+      if (err) { return log.error({ fnct: 'Mongo GET Door movement', error }, 'Err Get of Mongo'); }
+      resolve(results);
+    });
+  });
 }
 
 module.exports = {

@@ -5,27 +5,18 @@ const { dBconnect, addFrontMovementLog, getFrontMovement, addDoorMovementLog, ge
 xdescribe('mongodbHandler', () => {
   const timestamp = Date.now() - 1000;
   before(function(done) {
-    dBconnect().then((tmp) => {
-      done();
-    });
-    // Open DB;
-    // Clear all logs if any.
+    dBconnect().then(() => done());
   })
 
-  it('Add front movement', async function() {
-    await addFrontMovementLog()
+  it('Add front movement', async () => {
+    await addFrontMovementLog();
     const list = await getFrontMovement(timestamp);
     expect(list.length).to.equal(1);
   });
 
-  xdescribe('Door movement', () => {
-
-    it('Add door movement', () => {
-      //
-    });
-
-    it('Check door movement log', () => {
-      //
-    });
+  it('Add door movement', async () => {
+    await addDoorMovementLog();
+    const list = await getDoorMovement(timestamp);
+    expect(list.length).to.equal(1);
   });
 })
