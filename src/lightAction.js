@@ -6,7 +6,7 @@
 const config = require('config');
 const { log } = require('./bunyanLogs');
 const { write1Pin } = require('./gpioActions');
-const { doorMovement } = require('./sqlightHandler');
+const { addDoorMovementLog } = require('./mongodbHandler');
 
 const lightActions = {
   closeLight: function closeLight() {
@@ -15,7 +15,7 @@ const lightActions = {
   },
   openLight: function openLight() {
     log.info({ fnct: 'openLight' }, `Open light ${new Date()}`);
-    doorMovement();
+    addDoorMovementLog();
     write1Pin(config.lightOpenSSR, 1);
     setTimeout(() => {
       this.closeLight();
