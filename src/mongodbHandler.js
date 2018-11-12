@@ -23,7 +23,7 @@ const dBconnect = async () => {
 const addFrontMovementLog = () => {
   const collection = dbName.collection('frontmovement');
   // Insert some documents
-  return collection.insertOne({frontDetection: Date.now()})
+  return collection.insertOne({timestamp: Date.now()})
   .catch(error => {
     log.error({ fnct: 'Mongo Front movement', error }, 'Err pushing to Mongo')
   });
@@ -35,7 +35,7 @@ const getFrontMovement = (date) => {
   return new Promise(function(resolve, reject) {
     // for some reason Mongo send a first "resolve" before it is time.
     dbName.collection('frontmovement')
-    .find({"frontDetection": { $gte : latest }})
+    .find({"timestamp": { $gte : latest }})
     .toArray((err, results) => {
       if (err) { return log.error({ fnct: 'Mongo GET Front movement', error }, 'Err Get of Mongo'); }
       resolve(results);
@@ -47,7 +47,7 @@ const getFrontMovement = (date) => {
 const addDoorMovementLog = () => {
   // Insert some documents
   return dbName.collection('doormovement')
-  .insertOne({doorDetection: Date.now()})
+  .insertOne({timestamp: Date.now()})
   .catch(error => log.error({ fnct: 'Mongo Door movement', error }, 'Err pushing to Mongo'));
 }
 
@@ -56,7 +56,7 @@ const getDoorMovement = (date) => {
   return new Promise(function(resolve, reject) {
     // for some reason Mongo send a first "resolve" before it is time.
     dbName.collection('doormovement')
-    .find({"doorDetection": { $gte : latest }})
+    .find({"timestamp": { $gte : latest }})
     .toArray((err, results) => {
       if (err) { return log.error({ fnct: 'Mongo GET Door movement', error }, 'Err Get of Mongo'); }
       resolve(results);
