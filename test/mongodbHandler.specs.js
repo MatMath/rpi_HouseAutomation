@@ -2,7 +2,7 @@ const expect = require('expect.js');
 
 const { dBconnect, addFrontMovementLog, getFrontMovement, addDoorMovementLog, getDoorMovement } = require('../src/mongodbHandler');
 
-describe('mongodbHandler', () => {
+describe.skip('mongodbHandler', () => {
   const timestamp = Date.now() - 1000;
   before((done) => {
     dBconnect().then(() => done());
