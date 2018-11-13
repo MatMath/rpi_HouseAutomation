@@ -1,12 +1,12 @@
 const expect = require('expect.js');
 
-const { dBconnect, addFrontMovementLog, getFrontMovement, addDoorMovementLog, getDoorMovement, getDbHandle } = require('../src/mongodbHandler');
+const { dBconnect, addFrontMovementLog, getFrontMovement, addDoorMovementLog, getDoorMovement } = require('../src/mongodbHandler');
 
 describe('mongodbHandler', () => {
   const timestamp = Date.now() - 1000;
-  before(function(done) {
+  before((done) => {
     dBconnect().then(() => done());
-  })
+  });
 
   it('Add front movement', async () => {
     await addFrontMovementLog();
@@ -19,4 +19,4 @@ describe('mongodbHandler', () => {
     const list = await getDoorMovement(timestamp);
     expect(list.length).to.equal(1);
   });
-})
+});
