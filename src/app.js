@@ -11,11 +11,10 @@ const { log } = require('./bunyanLogs');
 // const { scheduler } = require('./scheduler');
 // const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 // const { resizeAndValidateImg } = require('./openCVManager');
-// const { getAllErrLogs } = require('./sqlightHandler');
 const { openLight } = require('./lightAction');
 const fileUpload = require('./fileUpload');
 const gpioActions = require('./gpioActions');
-const { getDoorMovement, frontMovement, getFrontMovement } = require('./sqlightHandler');
+const { getDoorMovement, getFrontMovement, addFrontMovementLog } = require('./mongodbHandler');
 // const config = require('config');
 const userControls = require('./userControls');
 const fanControl = require('./fanControl');
@@ -65,7 +64,7 @@ app.initMonitors = () => {
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
   log.info({ fnct: 'movementFront' }, 'Front Movement detected', new Date());
-  frontMovement();
+  addFrontMovementLog();
 });
 
 myEmitter.on('movement', async () => {
@@ -103,19 +102,19 @@ app.use(expressBunyanLogger({
 app.use('/actions', checkPermission, userControls);
 app.get('/DoorMovement', (req, res) => {
   getDoorMovement().then(logs => res.json(logs.map(item => ({
-    timestamp: item.evenementAt,
-    humanReadable: new Date(item.evenementAt),
+    timestamp: item.timestamp,
+    humanReadable: new Date(item.timestamp),
   }))));
 });
 app.get('/FrontMovement', (req, res) => {
   getFrontMovement().then(logs => res.json(logs.map(item => ({
-    timestamp: item.evenementAt,
-    humanReadable: new Date(item.evenementAt),
+    timestamp: item.timestamp,
+    humanReadable: new Date(item.timestamp),
   }))));
 });
 app.use('/video', express.static('video'));
 app.get('/', (req, res) => {
-  res.json([/* '/logs', '/logs/delete', */'/actions', '/DoorMovement', 'FrontMovement']);
+  res.json([/* '/logs', '/logs/delete', */'/actions', '/DoorMovement', '/FrontMovement']);
 });
 
 app.use(errorMiddlware);
