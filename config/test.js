@@ -12,5 +12,5 @@ module.exports = {
       },
     },
   },
-  mongoDBName: 'test',
+  mongoDBName: 'test_rpi',
 };

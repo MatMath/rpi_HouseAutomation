@@ -67,7 +67,9 @@ const giveSignedUrl = (subfolder, key) => new Promise((resolve, reject) => {
 });
 
 
-module.exports.getList = getList;
-module.exports.deleteItem = deleteItem;
-module.exports.moveItem = moveItem;
-module.exports.giveSignedUrl = giveSignedUrl;
+module.exports = {
+  deleteItem,
+  getList,
+  giveSignedUrl,
+  moveItem,
+};

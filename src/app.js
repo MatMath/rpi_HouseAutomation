@@ -14,11 +14,12 @@ const { log } = require('./bunyanLogs');
 const { openLight } = require('./lightAction');
 const fileUpload = require('./fileUpload');
 const gpioActions = require('./gpioActions');
-const { getDoorMovement, getFrontMovement, addFrontMovementLog } = require('./mongodbHandler');
+const { getDoorMovement, getFrontMovement, addFrontMovementLog, dBconnect } = require('./mongodbHandler');
 // const config = require('config');
 const userControls = require('./userControls');
 const fanControl = require('./fanControl');
 
+dBconnect();
 
 const app = express();
 app.use(helmet());
