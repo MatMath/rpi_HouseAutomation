@@ -4,14 +4,18 @@ This will control some motor, light detector, a USB camera to automate the house
 ## But Why?
 If you want a simple system all build already use: https://github.com/ccrisan/motioneyeos I did that because I was bored and I wanted to control more than just the camera.
 
+## Structure:
+- One Webserver in Express/node only to manually control the system (optional).
+- RPI + Node + storage on MongoDB (atlas).
+
 ## Short setup checklist from blank SD Card:
 - Download/install Raspian
 - Update upgrade all package.
 - Install latest node with "n" or "nvm"
 - Add key to Github
 - Download repo
-- copy simpleAuth.sample.json simpleAuth.json / Edit it.
-- Install/setup motion
+- Install/setup motion (for Video)
+- Config the MongoDB URL in './config'
 - "Should work"
 
 ## Flow
@@ -62,6 +66,7 @@ Benefit: I don't have to use sudo anymore.
 Problem: I don't have an event emitter I have to loop check.
 
 ## Setup of Motion:
+Note: Using Motion can burn a SD card since it Write a lot. RP4 with Ram is way better.
 install motion: $ apt-get install motion
 Go into the config: /etc/motion/motion.conf
 Change the Path of the output to be the same as the AWS sync folder.
