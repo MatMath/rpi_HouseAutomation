@@ -5,15 +5,18 @@ const fanControl = require('./fanControl');
 const { openLight } = require('./lightAction');
 const { openBlindSequence, closeBlindSequence } = require('./blindActions');
 const { addFrontMovementLog, getFrontMovement, addDoorMovementLog, getDoorMovement } = require('./mongodbHandler');
+const { write1Pin } = require('./gpioActions');
 const config = require('config');
 
 const router = express.Router();
 
 router.get('/doormovement', async (req, res) => {
+  if (process.env.MOCK_SENSOR) write1Pin(config.doorMovementDetectionPin, 1);
   await addDoorMovementLog();
   res.json(await getDoorMovement());
 }); // To test the DB Connection only.
 router.get('/frontmovement', async (req, res) => {
+  if (process.env.MOCK_SENSOR) write1Pin(config.frontMovementDetectionPin, 1);
   await addFrontMovementLog();
   res.json(await getFrontMovement());
 }); // To test the DB Connection only.

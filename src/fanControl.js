@@ -3,15 +3,15 @@
 const fs = require('fs');
 const { hardware, processorFanPin } = require('config');
 
-const gpioActions = require('./gpioActions');
+const { write1Pin } = require('./gpioActions');
 const { log } = require('./bunyanLogs');
 
 const fan = {
   start: () => {
-    gpioActions.write1Pin(processorFanPin, 1);
+    write1Pin(processorFanPin, 1);
   },
   stop: () => {
-    gpioActions.write1Pin(processorFanPin, 0);
+    write1Pin(processorFanPin, 0);
   },
 };
 

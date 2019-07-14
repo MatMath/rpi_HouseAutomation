@@ -13,7 +13,7 @@ const { log } = require('./bunyanLogs');
 // const { resizeAndValidateImg } = require('./openCVManager');
 const { openLight } = require('./lightAction');
 const fileUpload = require('./fileUpload');
-const gpioActions = require('./gpioActions');
+const { gpioInit, monitorDoor, monitorFront } = require('./gpioActions');
 const { getDoorMovement, getFrontMovement, addFrontMovementLog, dBconnect } = require('./mongodbHandler');
 // const config = require('config');
 const userControls = require('./userControls');
@@ -29,9 +29,9 @@ const myEmitter = new MyEmitter();
 app.initMonitors = () => {
   fanControl.startMonitoring();
   fileUpload.monitorVideoDirectory();
-  gpioActions.gpioInit();
-  gpioActions.monitorDoor(myEmitter);
-  gpioActions.monitorFront(myEmitter);
+  gpioInit();
+  monitorDoor(myEmitter);
+  monitorFront(myEmitter);
 };
 
 // Handle the Blind Open/close flow
@@ -64,12 +64,14 @@ app.initMonitors = () => {
 // On movement
 myEmitter.on('movementFront', () => {
   // TODO: Trigger a front camera capture later.
+  console.log('movementFront');
   log.info({ fnct: 'movementFront' }, 'Front Movement detected', new Date());
   addFrontMovementLog();
 });
 
 myEmitter.on('movement', async () => {
   // Open light
+  console.log('OPEN LIGHT');
   log.info({ fnct: 'doorMovement' }, 'Door Movement detected', new Date());
   openLight();
 

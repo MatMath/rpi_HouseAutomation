@@ -8,26 +8,30 @@ const { log } = require('./bunyanLogs');
 const { write1Pin } = require('./gpioActions');
 const { addDoorMovementLog } = require('./mongodbHandler');
 
-const lightActions = {
-  closeLight: function closeLight() {
-    log.info({ fnct: 'closeLight' }, `Close light ${new Date()}`);
-    write1Pin(config.lightOpenSSR, 0);
-  },
-  openLight: function openLight() {
-    log.info({ fnct: 'openLight' }, `Open light ${new Date()}`);
-    addDoorMovementLog();
-    write1Pin(config.lightOpenSSR, 1);
-    setTimeout(() => {
-      this.closeLight();
-    }, config.lightOpen_ms);
-  },
-  activityLight: function activityLight() {
-    // For some strange reason sometime the process Stop and that is even if forever is on top of it. :|
-    // So having a blinking light might be fun to see if ti still run.
-    const OnOffDelay = 2000;
-    setInterval(() => write1Pin(config.aliveLight, 1), OnOffDelay);
-    setTimeout(() => setInterval(() => write1Pin(config.aliveLight, 0), OnOffDelay), OnOffDelay / 2);
-  },
+const closeLight = () => {
+  log.info({ fnct: 'closeLight' }, `Close light ${new Date()}`);
+  write1Pin(config.lightOpenSSR, 0);
 };
 
-module.exports = lightActions;
+const openLight = () => {
+  log.info({ fnct: 'openLight' }, `Open light ${new Date()}`);
+  addDoorMovementLog();
+  write1Pin(config.lightOpenSSR, 1);
+  setTimeout(() => {
+    closeLight();
+  }, config.lightOpen_ms);
+};
+
+const activityLight = () => {
+  // For some strange reason sometime the process Stop and that is even if forever is on top of it. :|
+  // So having a blinking light might be fun to see if ti still run.
+  const OnOffDelay = 2000;
+  setInterval(() => write1Pin(config.aliveLight, 1), OnOffDelay);
+  setTimeout(() => setInterval(() => write1Pin(config.aliveLight, 0), OnOffDelay), OnOffDelay / 2);
+};
+
+module.exports = {
+  closeLight,
+  openLight,
+  activityLight,
+};
